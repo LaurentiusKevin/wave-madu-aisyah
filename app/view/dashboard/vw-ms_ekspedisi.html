@@ -1,0 +1,89 @@
+<section class="py-5">
+  <div class="row">
+    <div class="col-lg mb-5">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="h6 text-uppercase mb-0">Ekspedisi List</h3>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped table-hover table-bordered table-sm" id="data_tables" width="100%">
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th>Alamat</th>
+                <th>Telp Kantor</th>
+                <th>Nama PIC</th>
+                <th>Telp PIC</th>
+                <th>e-Mail PIC</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <div class="card-footer">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group row">
+                <label for="cust_display" class="col-sm-4 col-form-label"><small>Data Selected</small></label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control form-control" id="row_display" placeholder="Data Selected" readonly>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-success btn-block" id="newbtn_form" onclick="newButton()">NEW</button>
+            </div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-warning btn-block" id="editbtn_form" onclick="editButton()" disabled>EDIT</button>
+            </div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-danger btn-block" id="deletebtn_form" onclick="deleteButton()" disabled>DEL</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" id="form_card" hidden>
+    <!-- Basic Form-->
+    <div class="col-lg mb-5">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="h6 text-uppercase mb-0" id="form_judul">New Ekspedisi</h3>
+        </div>
+        <div class="card-body">
+          <!-- <p>Lorem ipsum dolor sit amet consectetur.</p> -->
+          <form id="form_data">
+            <input type="text" id="set_id" name="set_id" value="new" hidden>
+            <div class="form-group">
+                <label class="form-control-label text-uppercase">Nama Ekspedisi</label>
+                <input type="text" placeholder="Nama Ekspedisi" class="form-control" name="input_nama" id="input_nama" autofocus required>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label text-uppercase">Alamat Ekspedisi</label>
+                <input type="text" placeholder="Alamat Ekspedisi" class="form-control" name="input_alamat" id="input_alamat" autofocus required>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label text-uppercase">Telp Ekspedisi</label>
+                <input type="text" placeholder="Telp Ekspedisi" class="form-control" name="input_telp" id="input_telp" autofocus required>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label text-uppercase">Nama PIC Ekspedisi</label>
+                <input type="text" placeholder="Nama PIC Ekspedisi" class="form-control" name="input_nama_pic" id="input_nama_pic" autofocus required>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label text-uppercase">Telp PIC Ekspedisi</label>
+                <input type="text" placeholder="Telp PIC Ekspedisi" class="form-control" name="input_telp_pic" id="input_telp_pic" autofocus required>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label text-uppercase">e-Mail PIC Ekspedisi</label>
+                <input type="email" placeholder="e-Mail PIC Ekspedisi" class="form-control" name="input_email_pic" id="input_email_pic" autofocus required>
+              </div>
+              <div class="form-group">       
+                <button type="submit" class="btn btn-primary">Simpan</button>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,185 @@
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.4.10/cleave.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.4/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.4/daterangepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+<script>
+  var exportAll = $('#exportbtn_all');
+  var exportSelected = $('#exportbtn_selected');
+  // var editForm = $('#editbtn_form');
+  // var deleteForm = $('#deletebtn_form');
+  // var cancelForm = $('#cancelbtn_form');
+  var formCard = $('#form_card');
+  var formData = $('#form_data');
+  var statusKirim = $('#input_status');
+  var inputTgl = $('#input_tgl');
+  var startDate = moment().startOf('week').format('YYYY-MM-DD');
+  var endDate = moment().endOf('week').format('YYYY-MM-DD');
+
+  $(document).ready(function () {
+    inputTgl.daterangepicker({
+      open: 'left',
+      startDate: moment().startOf('week'),
+      endDate: moment().endOf('week'),
+      locale: {
+        format: 'DD/MM/YYYY'
+      }
+    });
+    inputTgl.on('apply.daterangepicker', function(ev, picker) {
+      startDate = picker.startDate.format('YYYY-MM-DD');
+      endDate = picker.endDate.format('YYYY-MM-DD');
+      tables.clear().draw();
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-penj_tunggu_kirim.php",
+        data: {case:'list', status:statusKirim.val(), start_date:startDate, end_date:endDate},
+        success: function (response) {
+          // console.log(response);
+          resultData = JSON.parse(response);
+          tables.rows.add(resultData.data).draw();
+          if (tables.data().count() > 0) {
+            exportAll.removeClass('d-none');
+            exportSelected.removeClass('d-none');
+          } else {
+            exportAll.addClass('d-none');
+            exportSelected.addClass('d-none');
+          }
+        }
+      });
+    });
+
+    var tables = $('#data_tables').DataTable({
+      "scrollY": "200px",
+      "scrollX": true,
+      "scrollCollapse": true,
+      // "paging": false,
+      "pageLength": 25,
+      "bInfo": false,
+      "select": {
+        "style": 'multi',
+      },
+			"ajax": {
+				"method": "POST",
+				"url": "app/class/class-penj_tunggu_kirim.php",
+        "data": {
+          "case": "list",
+          "start_date": startDate,
+          "end_date": endDate,
+          "status": statusKirim.val()
+        }
+      },
+      "columns": [
+        { "data": "no_transaksi" },
+        { "data": "tgl_transaksi" },
+        { "data": "customer" },
+        { "data": "no_resi" },
+        { "data": "reseller" },
+        { "data": "subreseller" },
+        { "data": "grand_total", className: "text-right" }
+      ],
+      "order": [[0,'asc']]
+    });
+    statusKirim.change(function(e) {
+      // statusKirim = $(this).val();
+      tables.clear().draw();
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-penj_tunggu_kirim.php",
+        data: {case:'list', status:$(this).val(), start_date:startDate, end_date:endDate},
+        success: function (response) {
+          // console.log(response);
+          resultData = JSON.parse(response);
+          tables.rows.add(resultData.data).draw();
+          // if (tables.data().count() > 0) {
+          //   exportAll.removeClass('d-none');
+          //   exportSelected.removeClass('d-none');
+          // } else {
+          //   exportAll.addClass('d-none');
+          //   exportSelected.addClass('d-none');
+          // }
+        }
+      });
+    });
+
+    exportSelected.click(function(e) {
+      var output = $('#output').val();
+      var dataResult = Array();
+      var totalRow = tables.rows( { selected: true } ).count();
+      if (totalRow < 1) {
+        Swal.fire({
+          type: 'warning',
+          title: 'Data Kosong',
+          text: 'Silahkan pilih data pembelian yang akan di export!'
+        })
+      } else {
+        var dataRow = tables.rows( { selected: true } ).data();
+        for (let index = 0; index < dataRow.length; index++) {
+          dataResult.push(dataRow[index]['no_transaksi']);
+        }
+        // console.log(dataResult);
+        $.ajax({
+          type: "POST",
+          url: "app/class/class-penj_tunggu_kirim.php",
+          data: {case: 'kirim', noTransaksi: dataResult},
+          success: function (response) {
+            console.log(response);
+            var resultData = JSON.parse(response);
+            tables.ajax.reload();
+            switch (output) {
+              case 'excel':
+                var url = 'export/tunggu-kirim/'+startDate+'/'+endDate+'/'+resultData.no_transaksi;
+                break;
+            
+              case 'pdf':
+                var url = 'cetak/tunggu-kirim/'+resultData.no_transaksi;
+                break;
+            }
+            window.open(url);
+          }
+        });
+      }
+    });
+
+    exportAll.click(function(e) {
+      var output = $('#output').val();
+      var dataResult = Array();
+      // var totalRow = tables.data().count();
+      if (!tables.data().any()) {
+        Swal.fire({
+          type: 'warning',
+          title: 'Data Kosong',
+          text: 'Tidak ada data pada filter yang terpilih. Silahkan memilih ulang STATUS PENGIRIMAN atau TANGGAL TRANSAKSI!'
+        })
+      } else {
+        var dataRow = tables.data();
+        // for (let index = 0; index < dataRow.length; index++) {
+        //   dataResult.push(dataRow[index]['no_transaksi']);
+        // }
+        // console.log(dataResult);
+        $.ajax({
+          type: "POST",
+          url: "app/class/class-penj_tunggu_kirim.php",
+          data: {case: 'kirim-all', input_status:$('#input_status').val(), start_date:startDate, end_date:endDate},
+          success: function (response) {
+            console.log(response);
+            var resultData = JSON.parse(response);
+            tables.ajax.reload();
+            switch (output) {
+              case 'excel':
+                var url = 'export/tunggu-kirim/'+startDate+'/'+endDate+'/all';
+                break;
+            
+              case 'pdf':
+                var url = 'cetak/tunggu-kirim/all/'+startDate+'/'+endDate;
+                break;
+            }
+            window.open(url);
+          }
+        });
+      }
+    });
+  });
+
+</script>

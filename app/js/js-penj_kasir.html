@@ -1,0 +1,423 @@
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.4.10/cleave.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+<script>
+  var inputCustomer = $('#input_customer');
+  var displayCustomer = $('#display_customer');
+  var displayReseller = $('#display_reseller');
+  var displaySubReseller = $('#display_subreseller');
+  var displayEkspedisi = $('#display_ekspedisi');
+  var btnPilhCust = $('#btn_pilih_customer');
+  var domain = location.hostname;
+
+
+  function getProduct(id) {
+    $.ajax({
+      type: "POST",
+      url: "app/class/class-penj_kasir.php",
+      data: {case:'nama_produk'},
+      success: function (response) {
+        $('#produk_'+id).html(response);
+      }
+    });
+  }
+
+  function productChange(id)
+  {
+    var produk = $('#produk_'+id).val();
+    var inputHarga = new Cleave('#harga_'+id, {
+      numeral: true,
+      numeralThousandsGroupStyle: 'thousand'
+    });
+    var inputPotongan = new Cleave('#potongan_harga_'+id, {
+      numeral: true,
+      numeralThousandsGroupStyle: 'thousand'
+    });
+    var inputSubtotal = new Cleave('#subtotal_'+id, {
+      numeral: true,
+      numeralThousandsGroupStyle: 'thousand'
+    });
+    var inputTotalHarga = new Cleave('#total_harga', {
+      numeral: true,
+      numeralThousandsGroupStyle: 'thousand'
+    });
+    // console.log(produk);
+    $.ajax({
+      type: "POST",
+      url: "app/class/class-penj_kasir.php",
+      data: {case: 'get_harga', id: produk},
+      success: function (response) {
+        // console.log(response);
+        var qty = 1;
+        $('#qty_'+id).val(qty);
+        var result = JSON.parse(response);
+        
+        inputHarga.setRawValue(result.harga);
+        inputPotongan.setRawValue(result.potongan_harga);
+
+        var calc = parseFloat(result.harga) - parseFloat(result.potongan_harga);
+        calc *= qty;
+        inputSubtotal.setRawValue(calc);
+
+        var totalHarga = 0;
+        $('input[name^="produk[\'total\']"]').each(function() {
+          // console.log($(this).val());
+          totalHarga += parseFloat( numeral($(this).val()).value() );
+        });
+        // console.log(totalHarga);
+        inputTotalHarga.setRawValue(totalHarga);
+      }
+    });
+  }
+
+  function updateSubTotal(id)
+  {
+    var inputHarga = new Cleave('#harga_'+id, {
+      numeral: true,
+      numeralThousandsGroupStyle: 'thousand'
+    });
+    var inputPotongan = new Cleave('#potongan_harga_'+id, {
+      numeral: true,
+      numeralThousandsGroupStyle: 'thousand'
+    });
+    var inputSubtotal = new Cleave('#subtotal_'+id, {
+      numeral: true,
+      numeralThousandsGroupStyle: 'thousand'
+    });
+    var inputTotalHarga = new Cleave('#total_harga', {
+      numeral: true,
+      numeralThousandsGroupStyle: 'thousand'
+    });
+    var qty = $('#qty_'+id).val();
+    var valHarga = inputHarga.getRawValue();
+    if (valHarga == '') {
+      valHarga = 0;
+    }
+    var valPotongan = inputPotongan.getRawValue();
+    var calc = parseFloat(valHarga) - parseFloat(valPotongan);
+    calc *= qty;
+    inputSubtotal.setRawValue(calc);
+
+    var totalHarga = 0;
+    $('input[name^="produk[\'total\']"]').each(function() {
+      // console.log($(this).val());
+      totalHarga += parseFloat( numeral($(this).val()).value() );
+    });
+    // console.log(totalHarga);
+    inputTotalHarga.setRawValue(totalHarga);
+  }
+
+  var counter = 1;
+  $(document).ready(function() {
+    // ---- CUSTOMER TABLE ----
+    var custTables = $('#customer_table').DataTable({
+      // "scrollY": "200px",
+      "scrollCollapse": true,
+      // "paging": false,
+      // "pageLength": 25,
+      // "bInfo": false,
+      "ajax": {
+        "method": "POST",
+        "url": "app/class/class-penj_kasir.php",
+        "data": {
+          "case": "get_customer"
+        }
+      },
+      "columns": [
+      { "data": "nama" },
+      { "data": "alamat" },
+      { "data": "provinsi" },
+      { "data": "kota" },
+      { "data": "kecamatan" },
+      { "data": "nomor_wa" }
+      ],
+      "order": [
+        [0,'asc']
+      ]
+    });
+    $('#customer_table tbody').on('click', 'tr', function () {
+      var custData = custTables.row( this ).data();
+      $('#table_display_customer').val(custData['nama']);
+      $('#table_input_customer').val(custData['id_customer']);
+      $('#table_input_customer_alamat').val(custData['alamat']);
+      $('#table_input_customer_kecamatan').val(custData['kecamatan']);
+      $('#table_input_customer_kota').val(custData['kota']);
+      $('#table_input_customer_provinsi').val(custData['provinsi']);
+      $('#table_input_customer_nomor_wa').val(custData['nomor_wa']);
+      $('#btn_pilih_customer').removeAttr('disabled');
+      // console.log(formEditSelected.val());
+    } );
+    $('#btn_pilih_customer').click(function() {
+      $('#display_customer').val($('#table_display_customer').val());
+      $('#input_customer').val($('#table_input_customer').val());
+      $('#display_alamat').html($('#table_input_customer_alamat').val());
+      $('#display_kecamatan').html($('#table_input_customer_kecamatan').val());
+      $('#display_kota').html($('#table_input_customer_kota').val());
+      $('#display_provinsi').html($('#table_input_customer_provinsi').val());
+      $('#display_nomor_wa').html($('#table_input_customer_nomor_wa').val());
+      $('#modal_customer_table').modal('hide');
+    })
+    // GET CUSTOMER
+    displayCustomer.click(function() {
+      $('#modal_customer_table').modal('show');
+    });
+    // ---- CUSTOMER TABLE ----
+
+    // ---- RESELLER TABLE ----
+    var resellerTables = $('#reseller_table').DataTable({
+      // "scrollY": "200px",
+      "scrollCollapse": true,
+      // "paging": false,
+      // "pageLength": 25,
+      // "bInfo": false,
+      "ajax": {
+        "method": "POST",
+        "url": "app/class/class-penj_kasir.php",
+        "data": {
+          "case": "get_reseller"
+        }
+      },
+      "columns": [
+      { "data": "nama" },
+      { "data": "alamat" },
+      { "data": "no_hp" }
+      ],
+      "order": [
+        [0,'asc']
+      ]
+    });
+    $('#reseller_table tbody').on('click', 'tr', function () {
+      var resellerData = resellerTables.row( this ).data();
+      $('#table_display_reseller').val(resellerData['nama']);
+      $('#table_input_reseller_id').val(resellerData['id_reseller']);
+      $('#btn_pilih_reseller').removeAttr('disabled');
+      // console.log(formEditSelected.val());
+    } );
+    $('#btn_pilih_reseller').click(function() {
+      $('#display_reseller').val($('#table_display_reseller').val());
+      $('#input_reseller').val($('#table_input_reseller_id').val());
+      $('#modal_reseller_table').modal('hide');
+      // console.log($('#input_reseller').val());
+    });
+    displayReseller.click(function() {
+      $('#modal_reseller_table').modal('show');
+    });
+    // ---- RESELLER TABLE ----
+
+    // ---- SUB RESELLER TABLE ----
+    displaySubReseller.click(function() {
+      if ($('#input_reseller').val() == '') {
+        Swal.fire({
+          type: 'warning',
+          title: 'Reseller Kosong',
+          text: 'Silahkan memilih reseller sebelum anda memilih sub reseller'
+        })
+      } else {
+        var subResellerTables = $('#subreseller_table').DataTable({
+          // "scrollY": "200px",
+          "scrollCollapse": true,
+          // "paging": false,
+          // "pageLength": 25,
+          // "bInfo": false,
+          "ajax": {
+            "method": "POST",
+            "url": "app/class/class-penj_kasir.php",
+            "data": {
+              "case": "get_subreseller",
+              "id": $('#input_reseller').val()
+            }
+          },
+          "columns": [
+          { "data": "nama" },
+          { "data": "alamat" },
+          { "data": "no_hp" }
+          ],
+          "order": [
+            [0,'asc']
+          ]
+        });
+        $('#modal_subreseller_table').modal('show');
+        $('#subreseller_table tbody').on('click', 'tr', function () {
+          var subResellerData = subResellerTables.row( this ).data();
+          $('#table_display_subreseller').val(subResellerData['nama']);
+          $('#table_input_subreseller_id').val(subResellerData['id_reseller']);
+          $('#btn_pilih_subreseller').removeAttr('disabled');
+          // console.log(formEditSelected.val());
+        } );
+        $('#btn_pilih_subreseller').click(function() {
+          $('#display_subreseller').val($('#table_display_subreseller').val());
+          $('#input_subreseller').val($('#table_input_subreseller_id').val());
+          $('#modal_subreseller_table').modal('hide');
+          // console.log($('#input_subreseller').val());
+        });
+      }
+    });
+    // ---- SUB RESELLER TABLE ----
+
+    // ---- EKSPEDISI TABLE ----
+    var ekspedisiTables = $('#ekspedisi_table').DataTable({
+      // "scrollY": "200px",
+      "scrollCollapse": true,
+      // "paging": false,
+      // "pageLength": 25,
+      // "bInfo": false,
+      "ajax": {
+        "method": "POST",
+        "url": "app/class/class-penj_kasir.php",
+        "data": {
+          "case": "get_ekspedisi"
+        }
+      },
+      "columns": [
+      { "data": "nama" },
+      { "data": "alamat" },
+      { "data": "telp" },
+      { "data": "nama_pic" },
+      { "data": "telp_pic" },
+      { "data": "email_pic" }
+      ],
+      "order": [
+        [0,'asc']
+      ]
+    });
+    displayEkspedisi.click(function() {
+      $('#modal_ekspedisi_table').modal('show');
+      $('#ekspedisi_table tbody').on('click', 'tr', function () {
+        var ekspedisiData = ekspedisiTables.row( this ).data();
+        $('#table_display_ekspedisi').val(ekspedisiData['nama']);
+        $('#table_input_ekspedisi_id').val(ekspedisiData['id_ekspedisi']);
+        $('#btn_pilih_ekspedisi').removeAttr('disabled');
+        // console.log(formEditSelected.val());
+      } );
+      $('#btn_pilih_ekspedisi').click(function() {
+        $('#display_ekspedisi').val($('#table_display_ekspedisi').val());
+        $('#input_ekspedisi').val($('#table_input_ekspedisi_id').val());
+        $('#modal_ekspedisi_table').modal('hide');
+        // console.log($('#input_ekspedisi').val());
+      });
+    });
+    // ---- EKSPEDISI TABLE ----
+
+    var dataTables = $('#data_tables').DataTable({
+      "scrollY": "200px",
+      "scrollCollapse": true,
+      "paging": false,
+      "searching": false,
+      "ordering": false,
+      "bInfo": false
+      // "columns": [
+      //   {"data": "produk"},
+      //   {"data": "harga"},
+      //   {"data": "potongan_harga"},
+      //   {"data": "qty"},
+      //   {"data": "sub_total"}
+      // ]
+    });
+
+    // GET PRODUCT
+    getProduct(counter);
+
+    // ADD ROW
+    $('#add_row').click(function (e) {
+      e.preventDefault();
+      counter += 1;
+      // ADD TOTAL ROW
+      var availableRow = $('#number_row').val();
+      $('#number_row').val(availableRow+','+counter);
+      // ADD ROW TO TABLE
+      dataTables.row.add([
+        '<button type="button" class="btn btn-secondary btn-sm btn-outline-danger" id="del_row"><i class="fas fa-times"></i></button>',
+        '<select class="form-control form-control-sm" id="produk_'+counter+'" name="produk[\'nama\'][]" onchange="productChange(\''+counter+'\')"> <option value="">Pilih ...</option> </select>',
+        '<input type="text" class="form-control form-control-sm" id="harga_'+counter+'" name="produk[\'harga\'][]" placeholder="Rp 0,-" readonly>',
+        '<input type="text" class="form-control form-control-sm" id="potongan_harga_'+counter+'" name="produk[\'potongan_harga\'][]" onchange="updateSubTotal(\''+counter+'\')" placeholder="Rp 0,-">',
+        '<input type="number" class="form-control form-control-sm" id="qty_'+counter+'" name="produk[\'qty\'][]" min="1" placeholder="0" onchange="updateSubTotal(\''+counter+'\')">',
+        '<input type="text" class="form-control form-control-sm" id="subtotal_'+counter+'" name="produk[\'total\'][]" placeholder="Rp 0,-" readonly>'
+      ]).draw(false);
+        getProduct(counter);
+    });
+
+    // DELETE ROW
+    $('#data_tables').on("click", "button", function(){
+      // console.log($(this).parent());
+      dataTables.row($(this).parents('tr')).remove().draw(false);
+    });
+
+    // SUBMIT DATA
+    $('#form_data').submit(function (e) { 
+      e.preventDefault();
+      var dataForm = $(this).serializeArray();
+      dataForm.push({name: 'case', value: 'submit_data'});
+      if ($('#input_customer').val() == '' || $('#input_reseller').val() == '' || $('#input_subreseller').val() == '' || $('#total_harga').val() == '' || $('#input_ekspedisi').val() == '') {
+        Swal.fire({
+          type: 'warning',
+          title: 'Data Kosong',
+          text: 'Data Customer, Reseller, Sub Reseller dan Produk tidak boleh kosong'
+        })
+      } else {
+        $.ajax({
+          type: "POST",
+          url: "app/class/class-penj_kasir.php",
+          data: dataForm,
+          success: function (response) {
+            console.log(response);
+            var res = JSON.parse(response);
+            window.open('/cetak/nota/'+res.no_transaksi, '_blank');
+            window.focus();
+            location.reload();
+          }
+        });
+      }
+      
+      // var produk = [];
+      // var opsi = [];
+      // var harga = [];
+      // var qty = [];
+      // var total = [];
+      // var idCustomer = inputCustomer.val();
+      // var idReseller = $('#input_reseller').val();
+      // var idSubreseller = $('#input_subreseller').val();
+      // var subtotal = numeral($('#total_harga').val()).value();
+      // var numb_row = $('#number_row').val();
+      // var rowID = numb_row.split(',').map(Number);
+      // $.each(rowID, function (index, value) { 
+      //   produk.push($('#produk_'+value).val());
+      //   opsi.push($('#opsiharga_'+value).val());
+      //   harga.push(numeral($('#harga_'+value).val()).value());
+      //   qty.push($('#qty_'+value).val());
+      //   total.push(numeral($('#total_'+value).val()).value());
+      // });
+      // console.log(JSON.stringify(produk));
+      // console.log(JSON.stringify(opsi));
+      // console.log(JSON.stringify(harga));
+      // console.log(JSON.stringify(qty));
+      // console.log(JSON.stringify(total));
+      // $.ajax({
+      //   type: "POST",
+      //   url: "app/class/class-penj_kasir.php",
+      //   data: {case:'submit_form',id_customer:idCustomer, id_reseller:idReseller, id_subreseller:idSubreseller, subtotal:subtotal, produk:produk, opsi:opsi, harga:harga, qty:qty, total:total},
+      //   success: function (response) {
+      //     var data = JSON.parse(response);
+      //     if (data.status == 'success') {
+      //       Swal.fire({
+      //         type: 'success',
+      //         title: 'Transaksi Tersimpan',
+      //         text: 'ID Transaksi = '+data.no_transaksi,
+      //         onClose: function() {
+      //           location.reload();
+      //         }
+      //       })
+      //     } else {
+      //       Swal.fire({
+      //         type: 'error',
+      //         title: 'Gagal Menyimpan',
+      //         text: 'Silahkan mencoba lagi atau hubungi WAVE Solusi Indonesia'
+      //       })
+      //     }
+      //   }
+      // });
+    });
+
+  })
+</script>

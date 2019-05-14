@@ -1,0 +1,156 @@
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.4.10/cleave.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+<script>
+  var btnNew = $('#newbtn_form');
+  var btnEdit = $('#editbtn_form');
+  var btnDelete = $('#deletebtn_form');
+  var formCard = $('#form_card');
+  var formJudul = $('#form_judul');
+  var formData = $('#form_data');
+  var setID = $('#set_id');
+  var setDisplayName = $('#display_name');
+
+  var inputNama = $('#input_nama');
+  var inputHarga = new Cleave('#input_harga', {
+    numeral: true,
+    numeralThousandsGroupStyle: 'thousand'
+  });;
+  var inputPotongan =  new Cleave('#input_potongan_harga', {
+    numeral: true,
+    numeralThousandsGroupStyle: 'thousand'
+  });;
+  var inputReminder = $('#input_reminder');
+  var inputBerat = $('#input_berat');
+
+  function newProduct()
+  {
+    formCard.removeAttr('hidden');
+    setID.val('new');
+    inputNama.val('');
+    inputHarga.setRawValue('');
+    inputPotongan.setRawValue('');
+    inputBerat.val('');
+  }
+  
+  function editProduct()
+  {
+    var id = setID.val();
+    formCard.removeAttr('hidden');
+    // console.log(id);
+    $.ajax({
+      type: "POST",
+      url: "app/class/class-ms_product.php",
+      data: {case:'edit_product', id:id},
+      success: function (response) {
+        // console.log(response);
+        result = JSON.parse(response);
+        formCard.removeAttr('hidden');
+        formJudul.html('Edit Product - ( '+result.nama+' )');
+        inputNama.val(result.nama);
+        inputHarga.setRawValue(result.harga);
+        inputPotongan.setRawValue(result.potongan_harga);
+        inputReminder.val(result.reminder);
+        inputBerat.val(result.berat);
+      }
+    });
+  }
+
+  function deleteProduct()
+  {
+    var id = setID.val();
+    var name = setDisplayName.val();
+    $.ajax({
+      type: "POST",
+      url: "app/class/class-ms_product.php",
+      data: {case:'delete_product', id:id, name:name},
+      success: function (response) {
+        // console.log(response);
+        var result = JSON.parse(response);
+        if (result.status == 'success') {
+          Swal.fire({
+            type: 'success',
+            title: 'Berhasil',
+            text: 'Produk ( '+result.name+' ) berhasil terhapus.',
+            onClose: function(e) {
+              location.reload();
+            }
+          })
+        } else {
+          Swal.fire({
+            type: 'error',
+            title: 'Gagal',
+            text: 'Silahkan coba kembali atau hubungi WAVE SOLUSI INDONESIA'
+          })
+        }
+      }
+    });
+  }
+
+  $(document).ready(function() {
+    // NEW / UPDATE PRODUCT
+    formData.submit(function(e) {
+      e.preventDefault();
+      var dataID = setID.val();
+      var dataNama = inputNama.val();
+      var dataHarga = inputHarga.getRawValue();
+      var dataPotongan = inputPotongan.getRawValue();
+      var dataReminder = inputReminder.val();
+      var dataBerat = inputBerat.val();
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-ms_product-save.php",
+        data: {case:dataID, input_nama:dataNama, input_harga:dataHarga, input_potongan:dataPotongan, input_reminder:dataReminder, input_berat:dataBerat},
+        success: function (response) {
+          // console.log(response);
+          var result = JSON.parse(response);
+          if (result.status == 'success') {
+            Swal.fire({
+              type: 'success',
+              title: 'Data tersimpan',
+              text: 'Product : '+result.nama,
+              onClose: function(e) {
+                location.reload();
+              }
+            })
+          } else {
+            Swal.fire({
+              type: 'error',
+              title: 'Gagal Menyimpan'+result.nama,
+              text: 'Error :'+result.error+'Silahkan coba lagi atau hubungi WAVE Solusi Indonesia'
+            })
+          }
+        }
+      });
+    })
+
+    // PRODUCT LIST
+    var tables = $('#data_tables').DataTable({
+      "scrollY": "200px",
+      "scrollCollapse": true,
+      // "paging": false,
+      "pageLength": 25,
+      "bInfo": false,
+			"ajax": {
+				"method": "POST",
+				"url": "app/class/class-ms_product-list.php"
+      },
+      "columns": [
+      { "data": "nama" },
+      { "data": "harga" },
+      { "data": "potongan_harga" },
+      { "data": "reminder"},
+      { "data": "berat" },],
+      "order": [[0,'asc']]
+    });
+
+    $('#data_tables tbody').on('click', 'tr', function () {
+      var data = tables.row( this ).data();
+      setDisplayName.val(data['nama']);
+      setID.val(data['id_product']);
+      btnEdit.removeAttr('disabled');
+      btnDelete.removeAttr('disabled');
+    } );
+  })
+</script>

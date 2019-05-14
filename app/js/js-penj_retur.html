@@ -1,0 +1,196 @@
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="assets/dashboard/vendor/datatables/responsive/dataTables.responsive.min.js"></script>
+<script type="text/javascript" src="assets/dashboard/vendor/datatables/responsive/responsive.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+<script type="text/javascript">
+  function changeListDate()
+  {
+    var dateSelected = $('#bulan_transaksi').val();
+    var month = moment(dateSelected, 'YYYY-MM').format('MM');
+    var year = moment(dateSelected, 'YYYY-MM').format('YYYY');
+    $.ajax({
+      type: "POST",
+      url: "app/class/class-penj_retur.php",
+      data: {p:'filtered_transaction', m:month, y:year},
+      success: function (response) {
+        
+        var tables = $('#data_tables').DataTable();
+        if (response == 'empty') {
+          // console.log(response);
+          tables.clear().draw();
+        } else {
+          var data = JSON.parse(response);
+          tables.clear().draw();
+          $.each(data, function (i, val) { 
+            // console.log(val);
+            tables.row.add(val).draw();
+          });
+        }
+      }
+    });
+  }
+
+  function returProduk(id)
+  {
+    $.ajax({
+      type: "POST",
+      url: "app/class/class-penj_retur.php",
+      data: {p:'get_transaction_id',id:id},
+      success: function (response) {
+        // MASTER
+        // console.log(response);
+        var data = JSON.parse(response);
+        $('#no_transaksi').val(data.master.no_transaksi);
+        $('#reseller').val(data.master.id_reseller);
+        $('#tgl_transaksi').val( moment(data.master.tgl_transaksi,'YYYY-MM-DD HH:mm:ss').format('HH:mm - DD MMMM YYYY') );
+        $('#sub_reseller').val(data.master.id_subreseller);
+        $('#customer').val(data.master.id_customer);
+        $('#ekspedisi').val(data.master.id_ekspedisi);
+        // $('#grand_total').val(data.master.grand_total);
+
+        // TRANSACTION
+        // console.log(data);
+        var tables = $('#table_detail_transaksi').DataTable();
+        if (response == 'empty') {
+          // console.log(response);
+          tables.clear().draw();
+        } else {
+          tables.clear().draw();
+          $.each(data.transaction, function (i, val) { 
+            // console.log(val);
+            tables.row.add(val).draw();
+          });
+        }
+        $('#row_counter').val(data.counter_row);
+      }
+    });
+  }
+
+  function updateSubTotal(id)
+  {
+    var harga = parseFloat($('#harga_'+id).val());
+    var qty = parseInt($('#jumlah_'+id).val());
+    // var grandTotal = parseFloat($('#grand_total').val());
+    var calculation = (-1 * (harga * qty));
+    // var calcGrandTotal = grandTotal - calculation;
+
+    $('#subharga_'+id).val( numeral(calculation).format('0,0.00') );
+    // $('#grand_total').val( numeral(calcGrandTotal).format('0,0.0') );
+  }
+
+  $(document).ready(function() {
+    var date = moment().format('YYYY-MM');
+    $('#bulan_transaksi').val(date);
+
+    $('#data_tables').DataTable( {
+        responsive: true,
+        columnDefs: [
+          { responsivePriority: 1, targets: 0 },
+          { responsivePriority: 2, targets: 7 }
+        ],
+        "scrollY": "400px",
+        "scrollCollapse": true,
+        "paging": false,
+        "searching": false,
+        "bInfo": false,
+        // "processing": true,
+        // "serverSide": true,
+        "ajax": {
+            "url": "app/class/class-penj_retur.php",
+            "type": "POST",
+            "data": {
+              "p": 'get_transaction'
+            }
+        },
+        "columns": [
+            { "data": "no_transaksi" },
+            { "data": "tgl_transaksi" },
+            { "data": "id_customer" },
+            { "data": "id_reseller" },
+            { "data": "id_subreseller" },
+            { "data": "id_ekspedisi" },
+            { "data": "grand_total" },
+            { "data": "action" }
+        ]
+    });
+
+    $('#table_detail_transaksi').DataTable({
+      "paging": false,
+      "searching": false,
+      "bInfo": false,
+      "columns": [
+        { "data": "produk" },
+        { "data": "opsi" },
+        { "data": "harga" },
+        { "data": "jumlah" },
+        { "data": "sub_harga" }
+      ]
+    });
+
+    $('#form_data').submit(function(e) {
+      e.preventDefault();
+      var produk = [];
+      var opsi = [];
+      var harga = [];
+      var qty = [];
+      var total = [];
+      var noTrans = $('#no_transaksi').val();
+      var row_input = $('#row_counter').val();
+      var rowID = row_input.split(',').map(Number);
+      $.each(rowID, function (i, v) { 
+        if (i > 0) {
+          if (($('#jumlah_'+v).val()) > 0) {
+            produk.push($('#produk_'+v).val());
+            opsi.push($('#opsi_'+v).val());
+            harga.push(
+              numeral(
+                $('#harga_'+v).val()
+              ).value()
+            );
+            qty.push($('#jumlah_'+v).val());
+            total.push(
+              numeral(
+                $('#subharga_'+v).val()
+              ).value()
+            );
+          }
+        }
+      });
+      // console.log(produk);
+      // console.log(opsi);
+      // console.log(harga);
+      // console.log(qty);
+      // console.log(total);
+      // console.log(noTrans);
+
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-penj_retur.php",
+        data: {p:"submit", produk:produk, opsi:opsi, harga:harga, qty:qty, total:total, noTrans:noTrans},
+        success: function (response) {
+          console.log(response);
+          var data = JSON.parse(response);
+          if (data.status == 'success') {
+            Swal.fire({
+              type: 'success',
+              title: 'Transaksi Tersimpan',
+              text: 'ID Transaksi = '+data.no_transaksi,
+              onClose: function() {
+                location.reload();
+              }
+            })
+          } else {
+            Swal.fire({
+              type: 'error',
+              title: 'Gagal Menyimpan',
+              text: 'Silahkan mencoba lagi atau hubungi WAVE Solusi Indonesia'
+            })
+          }
+        }
+      });
+    })
+  })
+</script>

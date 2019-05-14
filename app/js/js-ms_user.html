@@ -1,0 +1,237 @@
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.4.10/cleave.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.4/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.4/daterangepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettyCheckable/2.1.2/prettyCheckable.min.js"></script>
+<script>
+  var btnNew = $('#newbtn_form');
+  var btnEdit = $('#editbtn_form');
+  var btnDelete = $('#deletebtn_form');
+
+  var username = document.getElementById('input_username');
+  var password = document.getElementById('input_password');
+  var namaLengkap = document.getElementById('input_namalengkap');
+  var telp = document.getElementById('input_telp');
+  var formCase = document.getElementById('case');
+
+  var selectedID = document.getElementById('selected_id');
+  var selectedName = document.getElementById('selected_name');
+
+  function newForm()
+  {
+    formCase.value = 'new';
+    username.value = '';
+    username.removeAttribute('readonly');
+    password.value = '';
+    password.setAttribute('required','true');
+    namaLengkap.value = '';
+    telp.value = '';
+    var items = document.getElementsByName('menu[]');
+    for(var i=0; i<items.length; i++){
+      if(items[i].type=='checkbox')
+        items[i].checked=false;
+    }
+    // console.log('new form')
+  }
+
+  function editForm(info,permission)
+  {
+    formCase.value = 'update';
+    username.value = info[0].username;
+    username.setAttribute('readonly','true');
+    password.value = '';
+    password.removeAttribute('required');
+    namaLengkap.value = info[0].nama_lengkap;
+    telp.value = info[0].telp;
+
+    var items = document.getElementsByName('menu[]');
+    var menuSelected = new Array();
+    for (let i = 0; i < permission.length; i++) {
+      menuSelected[i] = permission[i].id_menu;
+    }
+    for (let i = 0; i < items.length; i++) {
+      if (menuSelected.includes(items[i].value)) {
+        items[i].checked = true;
+      } else {
+        items[i].checked = false;
+      }
+    }
+  }
+  
+  $(document).ready(function() {
+    var tables = $('#data_tables').DataTable({
+      "scrollY": "150px",
+      "scrollX": true,
+      "scrollCollapse": true,
+      // "paging": false,
+      "pageLength": 25,
+      "bInfo": false,
+			"ajax": {
+				"method": "POST",
+				"url": "app/class/class-ms_user.php",
+        "data": {
+          "case": "list"
+        }
+      },
+      "columns": [
+        { "data": "username" },
+        { "data": "nama_lengkap" },
+        { "data": "telp" },
+        { "data": "date_create" },
+        { "data": "status" }
+      ],
+      "order": [[0,'asc']]
+    });
+    $('#data_tables tbody').on( 'click', 'tr', function () {
+      var data = tables.row( this ).data();
+      // console.log(data['username']);
+      if ( $(this).hasClass('selected') ) {
+        $(this).removeClass('selected');
+        selectedID.value = '';
+        selectedName.value = '';
+        btnEdit.attr('disabled','true');
+        btnDelete.attr('disabled','true');
+      }
+      else {
+        tables.$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+        selectedID.value = data['username'];
+        selectedName.value = data['nama_lengkap'];
+        btnEdit.removeAttr('disabled');
+        btnDelete.removeAttr('disabled');
+      }
+    } );
+
+    $.ajax({
+      type: "POST",
+      url: "app/class/class-ms_user.php",
+      data: {case:'menu'},
+      success: function (response) {
+        // console.log(response);
+        var html = '';
+        var listMenu = JSON.parse(response);
+        console.log(listMenu);
+        $.each(listMenu, function (groupID, val) { 
+          html += '<div class="row mt-3"><div class="col-lg-6"><p class="text-uppercase">'+val.groupName+'</p></div></div>';
+          html += '<div class="row ml-3">';
+          $.each(val.menu, function (menuOrder, menu) { 
+            html += '<div class="col-lg-4">';
+            html += '<div class="custom-control custom-checkbox my-1 mr-sm-2">  ';
+            html += '<input type="checkbox" class="custom-control-input" id="menu['+menu.ID+']" name="menu[]" value="'+menu.ID+'">';
+            html += '<label class="custom-control-label" for="menu['+menu.ID+']">';
+            html += menu.name;
+            html += '</label> </div> </div>';
+          });
+          html += '</div>';
+          html += '</div>';
+          // console.log(val.groupName);
+        });
+        $('#menuCheckbox').html(html);
+        // $('input[type="checkbox"]').iCheck({
+        //   checkboxClass: 'icheckbox_square',
+        //   radioClass: 'iradio_square',
+        //   increaseArea: '20%' // optional
+        // });
+        // $('input.myClass').prettyCheckable({
+        //   color: 'red'
+        // });
+      }
+    });
+    
+    $('#userForm').submit(function(e) {
+      e.preventDefault();
+      var formData = $(this).serializeArray();
+      // formData.push(
+      //   {name:'case', value:'insert'}
+      // )
+      // console.log(formData);
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-ms_user.php",
+        data: formData,
+        success: function (response) {
+          // console.log(response);
+          var responseData = JSON.parse(response);
+          if (responseData.status == 'success') {
+            Swal.fire({
+              type: 'success',
+              title: 'Berhasil',
+              text: 'Berhasil menyimpan user '+username.value,
+              onClose: function(e) {
+                $('#modal_user').modal('hide');
+                tables.ajax.reload();
+              }
+            })
+          } else {
+            Swal.fire({
+              type: 'error',
+              title: 'Gagal',
+              text: 'Gagal menyimpan perubahan. Silahkan coba lagi atau hubungi WAVE Solusi Indonesia'
+            })
+          }
+        }
+      });
+    })
+
+    btnNew.click(function(e) {
+      e.preventDefault();
+      newForm();
+      $('#modal_user').modal('show');
+    })
+
+    btnEdit.click(function(e) {
+      e.preventDefault();
+      var userSelected = tables.rows( '.selected' ).data();
+      // console.log(userSelected[0].username);
+      var data = [
+        {name:'username', value:userSelected[0].username},
+        {name:'case', value:'edit'}
+      ]
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-ms_user.php",
+        data: data,
+        success: function (response) {
+          var responseData = JSON.parse(response);
+          // console.log(responseData)
+          editForm(responseData.info,responseData.permission);
+          $('#modal_user').modal('show');
+        }
+      });
+    });
+
+    btnDelete.click(function(e) {
+      e.preventDefault();
+      var userSelected = tables.rows( '.selected' ).data();
+      var data = [
+        {name:'username', value:userSelected[0].username},
+        {name:'case', value:'delete'}
+      ]
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-ms_user.php",
+        data: data,
+        success: function (response) {
+          var responseData = JSON.parse(response);
+          // console.log(responseData);
+          tables.ajax.reload();
+          if (responseData.status == 'success') {
+            Swal.fire({
+              type: 'success',
+              title: responseData.username,
+              text: 'User berhasil dinonaktifkan.'
+            })
+          } else {
+            Swal.fire({
+              type: 'error',
+              title: 'Gagal tersimpan',
+              text: 'User '+responseData.username+' gagal dinonaktifkan. Silahkan coba lagi atau hubungi WAVE Solusi Indonesia'
+            })
+          }
+        }
+      });
+    })
+  })
+</script>

@@ -1,0 +1,170 @@
+<section class="py-5">
+  <div class="row">
+    <div class="col-lg mb-5">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="h6 text-uppercase mb-0">Sales History</h3>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped table-hover table-bordered table-sm display nowrap" id="data_tables" width="100%">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tgl Transaksi</th>
+                <th>Tgl Kirim</th>
+                <th>Nama Customer</th>
+                <th>Resi</th>
+                <th>Reseller</th>
+                <th>Sub Reseller</th>
+                <th>Grand Total</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <div class="card-footer">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group row">
+                <label for="cust_display" class="col-sm-3 col-form-label">Selected</label>
+                <div class="col-sm-9">
+                  <input type="text" id="selected_id" hidden>
+                  <input type="text" class="form-control" id="selected_name" placeholder="Selected" readonly>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2">
+              <!-- <button type="button" class="btn btn-success btn-block" id="newbtn_form" onclick="newButton()">NEW</button> -->
+            </div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-info btn-block d-none" id="viewbtn_form">VIEW</button>
+            </div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-success btn-block d-none" id="printbtn_form">PRINT</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade bd-example-modal-xl" id="detail_transaksi" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detail Transaksi</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-3">
+            <table class="table table-sm table-borderless">
+              <tbody>
+                <tr>
+                  <th colspan="3">Invoice</th>
+                </tr>
+                <tr>
+                  <td>Number</td>
+                  <td>:</td>
+                  <td id="modal_no_transaksi">1904K0004</td>
+                </tr>
+                <tr>
+                  <td>Date</td>
+                  <td>:</td>
+                  <td id="modal_tgl_transaksi">19 April 2019</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-lg-5">
+            <table class="table table-sm table-borderless">
+              <tbody>
+                <tr>
+                  <th colspan="3">Customer Detail</th>
+                </tr>
+                <tr>
+                  <td>Nama</td>
+                  <td>:</td>
+                  <td id="modal_nama_customer">Bahuwarna Setiawan</td>
+                </tr>
+                <tr>
+                  <td>Alamat</td>
+                  <td>:</td>
+                  <td id="modal_alamat">Gg. Ujung No. 262</td>
+                </tr>
+                <tr>
+                  <td>Kecamatan</td>
+                  <td>:</td>
+                  <td id="modal_kecamatan">PONTIANAK KOTA</td>
+                </tr>
+                <tr>
+                  <td>Kota/Kabupaten</td>
+                  <td>:</td>
+                  <td id="modal_kota">KOTA PONTIANAK</td>
+                </tr>
+                <tr>
+                  <td>Provinsi</td>
+                  <td>:</td>
+                  <td id="modal_provinsi">KALIMANTAN BARAT</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-lg-4">
+            <table class="table table-sm table-borderless">
+              <tbody>
+                <tr>
+                  <th colspan="3">Payment Detail</th>
+                </tr>
+                <tr>
+                  <td>Kasir</td>
+                  <td>:</td>
+                  <td id="modal_kasir_admin">Admin</td>
+                </tr>
+                <tr>
+                  <td>Reseller</td>
+                  <td>:</td>
+                  <td id="modal_reseller">Laurentius</td>
+                </tr>
+                <tr>
+                  <td>Sub Reseller</td>
+                  <td>:</td>
+                  <td id="modal_subreseller">Kevin</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg">
+            <p><strong>Purchase Detail</strong></p>
+            <table class="table table-sm table-bordered">
+              <thead>
+                <tr>
+                  <th width="5%">No.</th>
+                  <th width="30%">Produk</th>
+                  <th width="20%">Harga</th>
+                  <th width="20%">Potongan</th>
+                  <th width="5%">Qty</th>
+                  <th width="20%">Sub Harga</th>
+                </tr>
+              </thead>
+              <tbody id="modal_detail_transaksi"></tbody>
+              <tbody>
+                <tr>
+                  <td colspan="3"></td>
+                  <td class="bg-dark text-white font-weight-bold" align="center">Total</td>
+                  <td class="bg-dark text-white font-weight-bold" align="right" colspan="2" id="modal_detail_transaksi_total">Rp ....</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

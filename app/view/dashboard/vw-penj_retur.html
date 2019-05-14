@@ -1,0 +1,99 @@
+<section class="py-5">
+  <div class="row">
+    <!-- Basic Form-->
+    <div class="col-lg-4 mb-5">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="h6 text-uppercase mb-0" id="judul">Transaction List</h3>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-control-label text-uppercase">Bulan Transaksi</label>
+            <input type="month" class="form-control" id="bulan_transaksi" onchange="changeListDate()">
+          </div>
+          <table class="table table-striped nowrap" width="100%" id="data_tables">
+            <thead>
+              <tr>
+                <td>ID</td>
+                <td>Tanggal</td>
+                <td>Customer</td>
+                <td>Reseller</td>
+                <td>Sub Reseller</td>
+                <td>Expedisi</td>
+                <td>Total</td>
+                <td>#</td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8 mb-5">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="h6 text-uppercase mb-0" id="judul">Transaction Detail</h3>
+        </div>
+        <div class="card-body">
+          <form id="form_data">
+            <input type="hidden" name="row_counter" id="row_counter">
+            <div class="row">
+              <div class="col-lg-4">
+                <div class="form-group">
+                  <label class="form-control-label text-uppercase"><small># Transaksi</small></label>
+                  <input type="text" class="form-control form-control-sm" nama="no_transaksi" id="no_transaksi" readonly>
+                </div>
+                <div class="form-group">
+                  <label class="form-control-label text-uppercase"><small>Reseller</small></label>
+                  <input type="text" class="form-control form-control-sm" id="reseller" readonly>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="form-group">
+                  <label class="form-control-label text-uppercase"><small>Tanggal</small></label>
+                  <input type="text" class="form-control form-control-sm" id="tgl_transaksi" readonly>
+                </div>
+                <div class="form-group">
+                  <label class="form-control-label text-uppercase"><small>Sub Reseller</small></label>
+                  <input type="text" class="form-control form-control-sm" id="sub_reseller" readonly>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="form-group">
+                  <label class="form-control-label text-uppercase"><small>Customer</small></label>
+                  <input type="text" class="form-control form-control-sm" id="customer" readonly>
+                </div>
+                <div class="form-group">
+                  <label class="form-control-label text-uppercase"><small>Ekspedisi</small></label>
+                  <input type="text" class="form-control form-control-sm" id="ekspedisi" readonly>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg">
+                <table class="table table-striped table-hover table-bordered" id="table_detail_transaksi" width="100%">
+                  <thead>
+                    <tr>
+                      <td>Produk</td>
+                      <td>Opsi</td>
+                      <td>Harga</td>
+                      <td>Qty</td>
+                      <td>Sub Total</td>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-8"></div>
+              <div class="col-lg-4">
+                <div class="form-group float-right">
+                  <button type="submit" class="btn btn-primary">RETUR</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

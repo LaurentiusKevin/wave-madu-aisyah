@@ -1,0 +1,39 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+<script>
+  $(document).ready(function() {
+    $('#login_form').submit(function(e) {
+      e.preventDefault();
+      var data = $(this).serialize();
+      
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-login.php",
+        data: data,
+        success: function (response) {
+          console.log(response);
+          var dataResult = JSON.parse(response);
+          switch (dataResult.status) {
+            case 'success':
+              Swal.fire({
+                type: 'success',
+                title: 'Selamat Datang',
+                text: $('#input_username').val(),
+                onClose: function() {
+                  location.reload();
+                }
+              })
+              break;
+
+            case 'failed':
+              Swal.fire({
+                type: 'warning',
+                title: 'Login Gagal',
+                text: 'Silahkan cek Username dan Password anda!'
+              })
+              break;
+          }
+        }
+      });
+    })
+  })
+</script>

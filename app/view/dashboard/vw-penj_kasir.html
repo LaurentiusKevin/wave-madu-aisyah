@@ -1,0 +1,350 @@
+<section class="py-5">
+  <div class="row">
+    <!-- Basic Form-->
+    <div class="col-lg mb-5">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="h6 text-uppercase mb-0" id="judul">Kasir</h3>
+        </div>
+        <div class="card-body">
+          <!-- <p>Lorem ipsum dolor sit amet consectetur.</p> -->
+          <form id="form_data">
+            <input type="hidden" id="number_row" name="number_row" value="1">
+            <div class="row">
+              <div class="col-lg">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label">Customer</label>
+                  <div class="col-sm-9">
+                    <input type="hidden" name="input_customer" id="input_customer" value="">
+                    <input type="text" placeholder="Klik untuk memilih" class="form-control" id="display_customer" readonly required>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label">Reseller</label>
+                  <div class="col-sm-9">
+                    <input type="hidden" name="input_reseller" id="input_reseller" value="">
+                    <input type="text" placeholder="Klik untuk memilih" class="form-control" id="display_reseller" readonly required>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label">Sub Reseller</label>
+                  <div class="col-sm-9">
+                    <input type="hidden" name="input_subreseller" id="input_subreseller" value="">
+                    <input type="text" placeholder="Klik untuk memilih" class="form-control" id="display_subreseller" readonly required>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label">Ekspedisi</label>
+                  <div class="col-sm-9">
+                    <input type="hidden" name="input_ekspedisi" id="input_ekspedisi" value="">
+                    <input type="text" placeholder="Klik untuk memilih" class="form-control" id="display_ekspedisi" readonly required>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg">
+                <table class="table table-sm table-borderless">
+                  <tbody>
+                    <tr>
+                      <td width="25%">Alamat</td>
+                      <td width="5%">:</td>
+                      <td><span id="display_alamat"></span></td>
+                    </tr>
+                    <tr>
+                      <td>Kecamatan</td>
+                      <td width="5%">:</td>
+                      <td><span id="display_kecamatan"></span></td>
+                    </tr>
+                    <tr>
+                      <td>Kota</td>
+                      <td width="5%">:</td>
+                      <td><span id="display_kota"></span></td>
+                    </tr>
+                    <tr>
+                      <td>Provinsi</td>
+                      <td width="5%">:</td>
+                      <td><span id="display_provinsi"></span></td>
+                    </tr>
+                    <tr>
+                      <td>Nomor WA</td>
+                      <td width="5%">:</td>
+                      <td><span id="display_nomor_wa"></span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- <div class="form-group">       
+              <button type="button" class="btn btn-secondary btn-sm" id="add_row"><i class="fas fa-plus"></i></button>
+            </div> -->
+            <table class="table table-bordered table-hover" id="data_tables">
+              <thead>
+                <tr>
+                  <th width="5%">
+                    <button type="button" class="btn btn-secondary btn-sm btn-outline-success" id="add_row"><i class="fas fa-plus"></i></button>
+                  </th>
+                  <th width="20%">Nama Item</th>
+                  <th width="20%">Harga</th>
+                  <th width="20%">Potongan Harga</th>
+                  <th width="10%">Qty</th>
+                  <th width="20%">Sub Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <button type="button" class="btn btn-secondary btn-sm btn-outline-danger" id="del_row"><i class="fas fa-times"></i></button>
+                  </td>
+                  <td>
+                    <select class="form-control form-control-sm" id="produk_1" name="produk['nama'][]" onchange="productChange('1')">
+                      <option value="">Pilih ...</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input type="text" class="form-control form-control-sm" id="harga_1" name="produk['harga'][]" placeholder="Rp 0,-" readonly>
+                  </td>
+                  <td>
+                    <input type="text" class="form-control form-control-sm" id="potongan_harga_1" name="produk['potongan_harga'][]" onchange="updateSubTotal('1')" placeholder="Rp 0,-">
+                  </td>
+                  <td>
+                    <input type="number" class="form-control form-control-sm" id="qty_1" name="produk['qty'][]" min="1" placeholder="0" onchange="updateSubTotal('1')">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control form-control-sm" id="subtotal_1" name="produk['total'][]" placeholder="Rp 0,-" readonly>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p></p>
+            <div class="row">
+              <div class="col-lg-5"></div>
+              <div class="col-lg-3"></div>
+              <div class="col-lg-4">
+                <div class="form-group row">
+                  <label  class="col-sm-3 col-form-label"><strong>Total</strong></label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control form-control-sm" id="total_harga" name="total_harga" placeholder="Rp 0,-" readonly>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-lg">
+                <div class="form-group">       
+                  <button type="submit" class="btn btn-primary">CHECKOUT</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- MODAL CUSTOMER POPUP -->
+<div class="modal fade bd-example-modal-xl" id="modal_customer_table" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Pilih Customer</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg">
+            <table class="table table-hover table-bordered table-sm" id="customer_table" width="100%">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Alamat</th>
+                  <th>Provinsi</th>
+                  <th>Kota</th>
+                  <th>Kecamatan</th>
+                  <th>Nomor WA</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group row">
+                <label for="cust_display" class="col-sm-4 col-form-label">Customer Selected</label>
+                <div class="col-sm-8">
+                  <input type="hidden" id="table_input_customer" value="">
+                  <input type="hidden" id="table_input_customer_alamat" value="">
+                  <input type="hidden" id="table_input_customer_kecamatan" value="">
+                  <input type="hidden" id="table_input_customer_kota" value="">
+                  <input type="hidden" id="table_input_customer_provinsi" value="">
+                  <input type="hidden" id="table_input_customer_nomor_wa" value="">
+                  <input type="text" class="form-control form-control" id="table_display_customer" placeholder="Customer" readonly>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4"></div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-success btn-block" id="btn_pilih_customer" disabled>Pilih</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /MODAL CUSTOMER POPUP -->
+
+<!-- MODAL RESELLER POPUP -->
+<div class="modal fade bd-example-modal-xl" id="modal_reseller_table" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Pilih RESELLER</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg">
+            <table class="table table-hover table-bordered table-sm" id="reseller_table" width="100%">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Alamat</th>
+                  <th>No HP</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group row">
+                <label for="cust_display" class="col-sm-4 col-form-label">Customer Selected</label>
+                <div class="col-sm-8">
+                  <input type="hidden" id="table_input_reseller_id" value="">
+                  <input type="text" class="form-control form-control" id="table_display_reseller" placeholder="Reseller" readonly>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4"></div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-success btn-block" id="btn_pilih_reseller" disabled>Pilih</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /MODAL RESELLER POPUP -->
+
+<!-- MODAL SUB RESELLER POPUP -->
+<div class="modal fade bd-example-modal-xl" id="modal_subreseller_table" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Pilih SUB RESELLER</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg">
+            <table class="table table-hover table-bordered table-sm" id="subreseller_table" width="100%">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Alamat</th>
+                  <th>No HP</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group row">
+                <label for="cust_display" class="col-sm-4 col-form-label">Customer Selected</label>
+                <div class="col-sm-8">
+                  <input type="hidden" id="table_input_subreseller_id" value="">
+                  <input type="text" class="form-control form-control" id="table_display_subreseller" placeholder="Sub Reseller" readonly>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4"></div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-success btn-block" id="btn_pilih_subreseller" disabled>Pilih</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EKSPEDISI POPUP -->
+<div class="modal fade bd-example-modal-xl" id="modal_ekspedisi_table" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Pilih Ekspedisi</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg">
+            <table class="table table-hover table-bordered table-sm" id="ekspedisi_table" width="100%">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Alamat</th>
+                  <th>Telp</th>
+                  <th>Nama PIC</th>
+                  <th>Telp PIC</th>
+                  <th>e-Mail PIC</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group row">
+                <label for="table_display_ekspedisi" class="col-sm-4 col-form-label">Ekspedisi Selected</label>
+                <div class="col-sm-8">
+                  <input type="hidden" id="table_input_ekspedisi_id" value="">
+                  <input type="text" class="form-control form-control" id="table_display_ekspedisi" placeholder="Ekspedisi" readonly>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4"></div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-success btn-block" id="btn_pilih_ekspedisi" disabled>Pilih</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /MODAL EKSPEDISI POPUP -->

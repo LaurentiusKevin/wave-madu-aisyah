@@ -1,0 +1,207 @@
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+<script>
+  var newForm = $('#newbtn_form');
+  var editForm = $('#editbtn_form');
+  var deleteForm = $('#deletebtn_form');
+  var formCard = $('#form_card');
+  var formJudul = $('#form_judul');
+  var formData = $('#form_data');
+  var setID = $('#set_id');
+  var setDisplayName = $('#cust_display');
+
+  var inputNama = $('#input_nama');
+  var inputNomor = $('#input_nomor');
+  var provinsi = $('#provinsi');
+  var kota = $('#kota');
+  var kecamatan = $('#kecamatan');
+  var inputAlamat = $('#input_alamat');
+
+  function newButton() {
+    setID.val('new');
+    formCard.removeAttr('hidden');
+    formJudul.html('New Customer');
+    inputNama.val('');
+    inputNomor.val('');
+    provinsi.val($("#target option:first").val());
+    kota.attr('disabled','').html('<option selected>Pilih ...</option>');
+    kecamatan.attr('disabled','').html('<option selected>Pilih ...</option>');
+    inputAlamat.val('');
+    inputAlamat.attr('disabled','');
+  }
+
+  function editButton()
+  {
+    var id = setID.val();
+    // console.log(id);
+    $.ajax({
+      type: "POST",
+      url: "app/class/class-ms_customer-getid.php",
+      data: {id:id},
+      success: function (response) {
+        data = JSON.parse(response);
+        // console.log(response);
+        formCard.removeAttr('hidden');
+        formJudul.html('Edit Customer - ( '+data.nama+' )');
+        setID.val(data.id_customer);
+        inputNama.val(data.nama);
+        inputNomor.val(data.nomor_wa);
+        provinsi.html(data.provinsi);
+        kota.html(data.kota);
+        kota.removeAttr('disabled');
+        kecamatan.html(data.kecamatan);
+        kecamatan.removeAttr('disabled');
+        inputAlamat.val(data.alamat);
+        inputAlamat.removeAttr('disabled');
+      }
+    });
+  }
+
+  function deleteButton() {
+    var id = setID.val();
+    var name = setDisplayName.val();
+    $.ajax({
+      type: "POST",
+      url: "app/class/class-ms_customer.php",
+      data: {case:'delete_customer', id:id, name:name},
+      success: function (response) {
+        var data = JSON.parse(response);
+        if (data.status == 'success') {
+          Swal.fire({
+            type: 'success',
+            title: 'Berhasil',
+            text: 'User '+data.nama+' berhasil terhapus.',
+            onClose: function(e) {
+              location.reload();
+            }
+          })
+        } else {
+          Swal.fire({
+            type: 'error',
+            title: 'Gagal',
+            text: 'Silahkan coba kembali atau hubungi WAVE SOLUSI INDONESIA'
+          })
+        }
+      }
+    });
+  }
+
+  $(document).ready(function() {
+    // CUSTOMER LIST
+    var tables = $('#data_tables').DataTable({
+      "scrollY": "200px",
+      "scrollCollapse": true,
+      // "paging": false,
+      "pageLength": 25,
+      "bInfo": false,
+			"ajax": {
+				"method": "POST",
+				"url": "app/class/class-ms_customer.php",
+        "data": {
+          "case": "list_customer"
+        }
+      },
+      "columns": [
+      { "data": "nama" },
+      { "data": "alamat" },
+      { "data": "provinsi" },
+      { "data": "kota" },
+      { "data": "kecamatan" },
+      { "data": "nomor_wa" },],
+      "order": [[0,'asc']]
+    });
+
+    $('#data_tables tbody').on('click', 'tr', function () {
+        var data = tables.row( this ).data();
+        setDisplayName.val(data['nama']);
+        setID.val(data['id_customer']);
+        editForm.removeAttr('disabled');
+        deleteForm.removeAttr('disabled');
+    } );
+
+    // Provinsi
+    $.ajax({
+      type: "POST",
+      url: "app/class/class-ms_customer-getwilayah.php",
+      data: {p:"provinsi"},
+      dataType: "html",
+      success: function (response) {
+        provinsi.html(response);
+      }
+    });
+
+    // Kota
+    $('#provinsi').change(function() {
+      var id = $(this).val();
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-ms_customer-getwilayah.php",
+        data: {p:"kota", id:id},
+        dataType: "html",
+        success: function (response) {
+          kota.removeAttr('disabled');
+          kota.html(response);
+          kecamatan.attr('disabled','true');
+          kecamatan.html('<option selected>Pilih ...</option>');
+          inputAlamat.attr('disabled','true');
+          inputAlamat.val('');
+        }
+      });
+    })
+
+    // Kecamatan
+    $('#kota').change(function() {
+      var id = $(this).val();
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-ms_customer-getwilayah.php",
+        data: {p:"kecamatan", id:id},
+        dataType: "html",
+        success: function (response) {
+          kecamatan.removeAttr('disabled');
+          kecamatan.html(response);
+          inputAlamat.attr('disabled','true');
+          inputAlamat.val('');
+        }
+      });
+    })
+
+    // ALAMAT
+    kecamatan.change(function() {
+      inputAlamat.removeAttr('disabled');
+      inputAlamat.val('');
+    })
+
+    // NEW CUSTOMER
+    formData.submit(function(e) {
+      e.preventDefault();
+      var data = $(this).serialize();
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-ms_customer-save.php",
+        data: data,
+        success: function (response) {
+          // console.log(response);
+          var result = JSON.parse(response);
+          if (result.status == 'success') {
+            Swal.fire({
+              type: 'success',
+              title: 'Data tersimpan',
+              text: 'Customer : '+result.nama,
+              onClose: function(e) {
+                location.reload();
+              }
+            })
+          } else {
+            Swal.fire({
+              type: 'error',
+              title: 'Gagal Menyimpan'+result.nama,
+              text: 'Error :'+result.error+'Silahkan coba lagi atau hubungi WAVE Solusi Indonesia'
+            })
+          }
+        }
+      });
+    })
+  })
+</script>

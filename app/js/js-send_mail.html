@@ -1,0 +1,19 @@
+<script src="https://smtpjs.com/v3/smtp.js"></script>
+<script>
+  $(document).ready(function() {
+    Email.send({
+      Host : "smtp25.elasticemail.com",
+      Username : "laurentiuskevin44@gmail.com",
+      Password : "87929b47-12d4-4095-887b-3cc62a42b3d5",
+      To : 'laurentiuskevin44@gmail.com',
+      From : "laurentiuskevin44@gmail.com",
+      Subject : "This is the subject",
+      Body : "And this is the body"
+    }).then(
+      message => alert(message)
+    );
+  })
+
+  // ClientID:"198045924339-5rms0ig0h3ab0n91uflnkcmhfqhtqov9.apps.googleusercontent.com"
+  // ClientSecret:"rSmtJ780X5X0vPpo65a59v8x"
+</script>

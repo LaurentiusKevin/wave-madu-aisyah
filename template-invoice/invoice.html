@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+  body
+  {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+  td
+  {
+    vertical-align: top;
+    text-align: left;
+  }
+  .brand
+  {
+    text-align: right;
+    font-weight: bold;
+  }
+  .title
+  {
+    font-size: 14px;
+  }
+  .detail
+  {
+    font-size: 13px;
+  }
+  .table
+  {
+    padding-top: 20px;
+  }
+  table.transaction
+  {
+    /* font-family: arial, sans-serif; */
+    border-collapse: collapse;
+    width: 100%;
+  }
+  table.transaction tr td
+  {
+    border: 2px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  </style>
+</head>
+<body>
+  <table width="100%">
+    <tr>
+      <td width="30%">
+        <table>
+          <tr>
+            <td colspan="3">
+              <strong>INVOICE</strong>
+            </td>
+          </tr>
+          <tr class="detail">
+            <td>Number</td>
+            <td>:</td>
+            <td>1904K0001</td>
+          </tr>
+          <tr class="detail">
+            <td>Date</td>
+            <td>:</td>
+            <td>18 April 2019</td>
+          </tr>
+        </table>
+      </td>
+      <td width="20%"></td>
+      <td width="50%">
+        <div class="brand">RESELLER MADU</div>
+      </td>
+    </tr>
+  </table>
+  <table class="table" width="100%">
+    <tr>
+      <td width="50%">
+        <table>
+          <tr>
+            <td colspan="3">
+              <strong>CUSTOMER DETAIL</strong>
+            </td>
+          </tr>
+          <tr class="detail">
+            <td>Nama</td>
+            <td>:</td>
+            <td>Laurentius Kevin Hendrawanto</td>
+          </tr>
+          <tr class="detail">
+            <td>Alamat</td>
+            <td>:</td>
+            <td>Jl. Salak Raya No. 23A, Rt 09, Rw 07, Sendangguwo</td>
+          </tr>
+          <tr class="detail">
+            <td>Kecamatan</td>
+            <td>:</td>
+            <td>Tembalang</td>
+          </tr>
+          <tr class="detail">
+            <td>Kota/Kabupaten</td>
+            <td>:</td>
+            <td>Kota Semarang</td>
+          </tr>
+          <tr class="detail">
+            <td>Provinsi</td>
+            <td>:</td>
+            <td>Jawa Tengah</td>
+          </tr>
+        </table>
+      </td>
+      <td width="5%"></td>
+      <td width="45%">
+        <table>
+          <tr>
+            <td colspan="3">
+              <strong>PAYMENT DETAIL</strong>
+            </td>
+          </tr>
+          <tr class="detail">
+            <td>Kasir</td>
+            <td>:</td>
+            <td>Admin</td>
+          </tr>
+          <tr class="detail">
+            <td>Reseller</td>
+            <td>:</td>
+            <td>Kevin</td>
+          </tr>
+          <tr class="detail">
+            <td>Sub Reseller</td>
+            <td>:</td>
+            <td>Kevin</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <p><strong>PURCHASE DETAIL</strong></p>
+  <table class="transaction">
+    <tr style="background-color: lightgrey;">
+      <td width="5%">No</td>
+      <td width="30%">Produk</td>
+      <td width="20%">Harga</td>
+      <td width="20%">Potongan</td>
+      <td width="5%">Qty</td>
+      <td width="20%">Sub Harga</td>
+    </tr>
+    <tr>
+      <td>1.</td>
+      <td>Madu Anak</td>
+      <td>75.000,00</td>
+      <td>5.000,00</td>
+      <td>2</td>
+      <td>140.000,00</td>
+    </tr>
+    <tr>
+      <td>1.</td>
+      <td>Madu Anak</td>
+      <td>75.000,00</td>
+      <td>5.000,00</td>
+      <td>2</td>
+      <td>140.000,00</td>
+    </tr>
+    <tr style="background-color: dodgerblue">
+      <td colspan="3">Harga sudah termasuk PPN (10%)</td>
+      <td colspan="2">Grand Total</td>
+      <td>280.000,00</td>
+    </tr>
+    <tr style="background-color: lightgrey;">
+      <td colspan="6">Terbilang : <span style="font-style:italic;">Dua Ratus Delapan Puluh Ribu Rupiah</span></td>
+    </tr>
+  </table>
+</body>
+</html>

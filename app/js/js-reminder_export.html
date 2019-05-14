@@ -1,0 +1,88 @@
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.4.10/cleave.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.4/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.4/daterangepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+<script>
+  function countTable(table)
+  {
+    var totalRow = table.rows().count();
+    if (totalRow == 0) {
+      exportBtn.setAttribute('disabled','true');
+    } else {
+      exportBtn.removeAttribute('disabled');
+    }
+    console.log(totalRow);
+  }
+
+  var exportBtn = document.getElementById('exportbtn_form');
+
+  var tglReminderSet = '';
+  var filterTgl = $('#filter_tgl');
+  var filterTglStart = moment().format('YYYY-MM-DD');
+  var filterTglEnd = moment().format('YYYY-MM-DD');
+
+  $(document).ready(function () {
+    var tables = $('#data_tables').DataTable({
+      "scrollY": "200px",
+      "scrollX": true,
+      "scrollCollapse": true,
+      // "paging": false,
+      "pageLength": 25,
+      "bInfo": false,
+			"ajax": {
+				"method": "POST",
+				"url": "app/class/class-reminder_export.php",
+        "data": {
+          "case": "list",
+
+        }
+      },
+      "columns": [
+      { "data": "nama_customer" },
+      { "data": "nomor_wa" },
+      { "data": "no_transaksi" },
+      { "data": "produk" },
+      { "data": "tgl_beli" },
+      { "data": "tgl_reminder" },
+      { "data": "tipe" },],
+      "order": [[0,'asc']],
+      "initComplete": function(setting,json) {
+        countTable(tables);
+      }
+    });
+
+    filterTgl.daterangepicker({
+      locale: {
+        format: 'DD/MM/YYYY'
+      }
+    });
+    filterTgl.on('apply.daterangepicker', function(ev, picker) {
+      // console.log(picker.startDate.format('YYYY-MM-DD'));
+      // console.log(picker.endDate.format('YYYY-MM-DD'));
+      filterTglStart = picker.startDate.format('YYYY-MM-DD');
+      filterTglEnd = picker.endDate.format('YYYY-MM-DD');
+      tables.clear();
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-reminder_export.php",
+        data: {case: 'list', start: filterTglStart, end: filterTglEnd},
+        success: function (response) {
+          // console.log(response);
+          var dataResult = JSON.parse(response);
+          tables.rows.add(dataResult.data).draw();
+          countTable(tables);
+        }
+      });
+    });
+
+    exportBtn.onclick = function(e) {
+      // console.log(filterTglStart);
+      // console.log(filterTglEnd);
+      var urlTarget = 'export/reminder/'+filterTglStart+'/'+filterTglEnd;
+      window.open(urlTarget);
+    }
+  });
+
+</script>

@@ -1,0 +1,52 @@
+<section class="py-5">
+  <div class="row">
+    <div class="col-lg mb-5">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="h6 text-uppercase mb-0">Export Reminder</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-3">
+              <div class="form-group">
+                <label for="filter_tgl">Filter Tanggal</label>
+                <input type="text" class="form-control form-control-sm" id="filter_tgl" autocomplete="off">
+              </div>
+            </div>
+          </div>
+          <hr>
+          <table class="table table-striped table-hover table-bordered table-sm display nowrap" id="data_tables" width="100%">
+            <thead>
+              <tr>
+                <th>Nama Customer</th>
+                <th>Nomor WA</th>
+                <th>#</th>
+                <th>Produk</th>
+                <th>Tgl Beli</th>
+                <th>Tgl Reminder</th>
+                <th>Tipe</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <div class="card-footer">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group row">
+                <label for="reminder_display" class="col-sm-3 col-form-label">Selected</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control form-control" id="selected_display" placeholder="Reminder" readonly>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2"></div>
+            <div class="col-lg-2"></div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-success btn-block" id="exportbtn_form">EXPORT</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

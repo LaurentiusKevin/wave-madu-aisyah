@@ -1,0 +1,83 @@
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.4/daterangepicker.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.4.10/cleave.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+<script>
+  var btnPrint = $('#printbtn_form');
+  var btnView = $('#viewbtn_form');
+  var selectedID = $('#selected_id');
+  var selectedName = $('#selected_name');
+
+  $(document).ready(function () {
+    var tables = $('#data_tables').DataTable({
+      "scrollY": "150px",
+      "scrollX": true,
+      "scrollCollapse": true,
+      // "paging": false,
+      "pageLength": 25,
+      "bInfo": false,
+			"ajax": {
+				"method": "POST",
+				"url": "app/class/class-penj_sales_history.php",
+        "data": {
+          "case": "list"
+        }
+      },
+      "columns": [
+        { "data": "no_transaksi" },
+        { "data": "tgl_transaksi" },
+        { "data": "tgl_kirim" },
+        { "data": "customer" },
+        { "data": "no_resi" },
+        { "data": "reseller" },
+        { "data": "subreseller" },
+        { "data": "grand_total" }
+      ],
+      "order": [[0,'asc']]
+    });
+    $('#data_tables tbody').on( 'click', 'tr', function () {
+      if ( $(this).hasClass('selected') ) {
+          $(this).removeClass('selected');
+      }
+      else {
+          tables.$('tr.selected').removeClass('selected');
+          $(this).addClass('selected');
+      }
+      var data = tables.row( this ).data();
+      selectedID.val(data['no_transaksi']);
+      selectedName.val(data['no_transaksi']);
+      btnPrint.removeClass('d-none');
+      btnView.removeClass('d-none');
+    } );
+
+    btnView.click(function(e) {
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-penj_sales_history.php",
+        data: {case:'detail-transaksi', id:selectedID.val()},
+        success: function (response) {
+          var result = JSON.parse(response);
+          console.log(result);
+          $('#modal_no_transaksi').html(result.info_transaksi.no_transaksi);
+          $('#modal_tgl_transaksi').html(result.info_transaksi.tgl_transaksi);
+          $('#modal_nama_customer').html(result.info_transaksi.customer);
+          $('#modal_alamat').html(result.info_transaksi.alamat);
+          $('#modal_kecamatan').html(result.info_transaksi.kecamatan);
+          $('#modal_kota').html(result.info_transaksi.kota);
+          $('#modal_provinsi').html(result.info_transaksi.provinsi);
+          // $('#modal_kasir_admin').html(result.info_transaksi.);
+          $('#modal_reseller').html(result.info_transaksi.reseller);
+          $('#modal_subreseller').html(result.subreseller);
+          $('#modal_detail_transaksi').html(result.detail_transaksi);
+          $('#modal_detail_transaksi_total').html(result.info_transaksi.grand_total);
+          $('#detail_transaksi').modal('show');
+        }
+      });
+    })
+
+    btnPrint.click(function(e) {
+      window.open('/cetak/nota/'+selectedID.val(), '_blank');
+    })
+  });
+</script>

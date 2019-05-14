@@ -1,0 +1,199 @@
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.4/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.4/daterangepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+
+<script>
+  var startDate = moment().startOf('month').format('YYYY-MM-DD');
+  var endDate = moment().endOf('month').format('YYYY-MM-DD');
+  var inputSeller = $('#seller_nama');
+  var inputProduk = $('#produk_nama');
+  var formData = $('#form_data');
+  var jenisLaporan = $('#jenis_laporan');
+
+  $(document).ready(function() {
+    // SELECT 2
+    jenisLaporan.select2({
+      data: [
+        {
+          "id": "per-faktur-rinci",
+          "text": "PER FAKTUR RINCI"
+        },
+        {
+          "id": "per-barang",
+          "text": "PER BARANG"
+        },
+        {
+          "id": "per-faktur-global",
+          "text": "PER FAKTUR GLOBAL"
+        },
+        {
+          "id": "per-barang-global",
+          "text": "PER BARANG GLOBAL"
+        }
+      ]
+    });
+    jenisLaporan.change(function(e) {
+      if (jenisLaporan.val() == 'per-faktur-rinci') {
+        $('#form_filter').addClass('invisible');
+      } else {
+        $('#form_filter').removeClass('invisible');
+      }
+    });
+    $('#jenis_export').select2({
+      data: [
+        {
+          "id": "pdf",
+          "text": "PDF"
+        },
+        {
+          "id": "excel",
+          "text": "EXCEL"
+        },
+        {
+          "id": "csv",
+          "text": "CSV"
+        }
+      ]
+    });
+
+    // DATE PICKER
+    $('#range_tanggal').daterangepicker({
+      startDate: moment().startOf('month'),
+      endDate: moment().endOf('month'),
+      locale: {
+        format: 'DD/MM/YYYY'
+      }
+    });
+    $('#range_tanggal').on('apply.daterangepicker', function(ev, picker) {
+      startDate = picker.startDate.format('YYYY-MM-DD');
+      endDate = picker.endDate.format('YYYY-MM-DD');
+      // console.log(startDate);
+      // console.log(endDate);
+    });
+
+    // JENIS LAPORAN CHANGE
+    inputSeller.click(function() {
+      console.log(jenisLaporan.val());
+      if (jenisLaporan.val() == 'per-faktur-rinci') {
+        Swal.fire({
+          type: 'info',
+          title: 'Jenis Laporan',
+          width: 700,
+          html: '<div class="text-center">Jenis laporan <strong>PER FAKTUR RINCI</strong> tidak membutuhkan filter.</div> <div class="text-center">Silahkan memilih jenis laporan lainnya untuk menggunakan filter.</div>'
+        })
+      } else {
+        $('#modal_seller').modal('show');
+      }
+    });
+    
+    
+
+    // SELLER MODAL
+    var sellerTable = $('#table_seller').DataTable({
+      // "scrollY": "200px",
+      "scrollCollapse": true,
+      // "paging": false,
+      "pageLength": 25,
+      // "bInfo": false,
+      "ajax": {
+        "method": "POST",
+        "url": "app/class/class-ms_reseller.php",
+        "data": {
+          "case": "list"
+        }
+      },
+      "columns": [
+      { "data": "nama" },
+      { "data": "alamat" },
+      { "data": "no_hp" }
+      ],
+      "order": [
+        [0,'asc']
+      ]
+    });
+    $('#table_seller tbody').on('click', 'tr', function () {
+      var sellerData = sellerTable.row( this ).data();
+      $('#table_seller_id').val(sellerData['id_reseller']);
+      $('#table_seller_nama').val(sellerData['nama']);
+      $('#btn_pilih_seller').removeAttr('disabled');
+      // console.log(formEditSelected.val());
+    } );
+    $('#btn_pilih_seller').click(function() {
+      $('#input_seller_id').val($('#table_seller_id').val());
+      $('#seller_nama').val($('#table_seller_nama').val());
+      $('#modal_seller').modal('hide');
+    })
+    
+
+    // PRODUK MODAL
+    var produkTable = $('#table_produk').DataTable({
+      // "scrollY": "200px",
+      "scrollCollapse": true,
+      // "paging": false,
+      "pageLength": 25,
+      // "bInfo": false,
+      "ajax": {
+        "method": "POST",
+        "url": "app/class/class-ms_product.php",
+        "data": {
+          "case": "list"
+        }
+      },
+      "columns": [
+      { "data": "nama" },
+      { "data": "harga" },
+      { "data": "potongan_harga" },
+      { "data": "berat" }
+      ],
+      "order": [
+        [0,'asc']
+      ]
+    });
+    $('#table_produk tbody').on('click', 'tr', function () {
+      var produkData = produkTable.row( this ).data();
+      $('#table_produk_id').val(produkData['id_product']);
+      $('#table_produk_nama').val(produkData['nama']);
+      $('#btn_pilih_produk').removeAttr('disabled');
+      // console.log(formEditSelected.val());
+    } );
+    $('#btn_pilih_produk').click(function() {
+      $('#input_produk_id').val($('#table_produk_id').val());
+      $('#produk_nama').val($('#table_produk_nama').val());
+      $('#modal_produk').modal('hide');
+    })
+    inputProduk.click(function() {
+      $('#modal_produk').modal('show');
+    });
+
+    $('#submit_form').click(function(e) {
+      e.preventDefault();
+      var seller = $('#input_seller_id').val();
+      var produk = $('#input_produk_id').val();
+      if (seller == '') { seller = 'all'; }
+      if (produk == '') { produk = 'all'; }
+      var urlArray = Array(
+        $('#jenis_laporan').val(),
+        startDate,
+        endDate,
+        seller,
+        produk
+      );
+
+      var jenisExport = $('#jenis_export').val();
+      switch (jenisExport) {
+        case 'pdf':
+          var urlTarget = 'laporan/'
+          $.each(urlArray, function (i, v) { 
+            urlTarget += v;
+            urlTarget += '/';
+          });
+          // console.log(urlTarget);
+          window.open(urlTarget);
+          break;
+      }
+    });
+  })
+</script>

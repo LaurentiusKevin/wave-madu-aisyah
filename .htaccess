@@ -1,0 +1,23 @@
+# Rewrite url
+# trial
+
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+
+# RewriteRule ^(.*)$ index.php?p=$1 [QSA,L]
+
+# Rewrite page request /index.php?p=example_page -> /example_page
+# Tulisan dalam kurung merupakan karakter yg diperbolehkan
+# angka 0-9, lowercase a-z, uppercase A-Z, karakter _-,
+# yang tanda + diluar digunakan untuk berapa panjang text tidak masalah
+
+#RewriteRule ^.*$ cetak.php
+
+#RewriteRule ^([0-9a-zA-Z_-]+) index.php?p=$1 [NC,L]
+RewriteRule ^.*$ ./index.php
+#RewriteRule ^([0-9a-zA-Z-]+)/([0-9a-zA-Z-]+) index.php?p=$1&id=$3
+
+# Untuk $_GET Custom

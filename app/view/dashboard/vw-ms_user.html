@@ -1,0 +1,164 @@
+<section class="py-5">
+  <div class="row">
+    <div class="col-lg mb-5">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="h6 text-uppercase mb-0">Master User</h3>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped table-hover table-bordered table-sm display nowrap" id="data_tables" width="100%">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Nama Lengkap</th>
+                <th>Telp.</th>
+                <th>Tgl Daftar</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <div class="card-footer">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group row">
+                <label for="cust_display" class="col-sm-3 col-form-label">Selected</label>
+                <div class="col-sm-9">
+                  <input type="text" id="selected_id" hidden>
+                  <input type="text" class="form-control" id="selected_name" placeholder="Selected" readonly>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-success btn-block" id="newbtn_form">NEW</button>
+            </div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-warning btn-block" id="editbtn_form" disabled>EDIT</button>
+            </div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-danger btn-block" id="deletebtn_form" disabled>DELETE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</section>
+
+<form id="userForm">
+  <input type="hidden" id="case" name="case" value="new">
+  <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="modal_user">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="h6 text-uppercase mb-0">Create User</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-control-label text-uppercase">Username</label>
+            <input 
+              type="text" 
+              placeholder="Username" 
+              class="form-control"
+              id="input_username"
+              name="input_username"
+              autocomplete="off"
+              required>
+          </div>
+          <div class="form-group">
+            <label class="form-control-label text-uppercase">Password</label>
+            <input 
+              type="password" 
+              placeholder="Password" 
+              class="form-control"
+              id="input_password"
+              name="input_password"
+              autocomplete="off"
+              required>
+          </div>
+          <div class="form-group">
+            <label class="form-control-label text-uppercase">Nama Lengkap</label>
+            <input 
+              type="text" 
+              placeholder="Nama Lengkap" 
+              class="form-control"
+              id="input_namalengkap"
+              name="input_namalengkap"
+              autocomplete="off"
+              required>
+          </div>
+          <div class="form-group">
+            <label class="form-control-label text-uppercase">Nomor Telpon</label>
+            <input 
+              type="text" 
+              placeholder="Nomor Telpon" 
+              class="form-control"
+              id="input_telp"
+              name="input_telp"
+              autocomplete="off"
+              required>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg">
+            <h3 class="h6 text-uppercase ml-3">User Permission</h3>
+          </div>
+        </div>
+        <div class="modal-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item" id="menuCheckbox">
+              <!-- <div class="row mt-3">
+                <div class="col-lg-2">
+                  <p class="text-uppercase">Master Data</p>
+                </div>
+              </div>
+              <div class="row ml-3">
+                <div class="col-lg-3">
+                  <input id="checkbox[coba]" type="checkbox">
+                  <label for="checkbox[coba]">User</label>
+                </div>
+                <div class="col-lg-3">
+                  <input id="checkbox[0]" type="checkbox">
+                  <label for="checkbox[0]">Customer</label>
+                </div>
+                <div class="col-lg-3">
+                  <input id="checkbox[0]" type="checkbox">
+                  <label for="checkbox[0]">Produk</label>
+                </div>
+                <div class="col-lg-3">
+                  <input id="checkbox[0]" type="checkbox">
+                  <label for="checkbox[0]">Produk</label>
+                </div>
+                <div class="col-lg-3">
+                  <input id="checkbox[coba]" type="checkbox">
+                  <label for="checkbox[coba]">User</label>
+                </div>
+                <div class="col-lg-3">
+                  <input id="checkbox[0]" type="checkbox">
+                  <label for="checkbox[0]">Customer</label>
+                </div>
+                <div class="col-lg-3">
+                  <input id="checkbox[0]" type="checkbox">
+                  <label for="checkbox[0]">Produk</label>
+                </div>
+                <div class="col-lg-3">
+                  <input id="checkbox[0]" type="checkbox">
+                  <label for="checkbox[0]">Produk</label>
+                </div>
+              </div> -->
+            </li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-success">Simpan</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</form>

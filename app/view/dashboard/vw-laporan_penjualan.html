@@ -1,0 +1,171 @@
+<section class="py-5">
+  <div class="row">
+    <div class="col-lg mb-5">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="h6 text-uppercase mb-0">Laporan Penjualan</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg">
+              <form id="form_data">
+          
+                <div class="form-group row">
+                  <label for="range_tanggal" class="col-sm-2 col-form-label col-form-label-sm">Range Tanggal</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control form-control-sm" id="range_tanggal">
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label for="range_tanggal" class="col-sm-2 col-form-label col-form-label-sm">Jenis Laporan</label>
+                  <div class="col-sm-10">
+                    <select class="form-control" id="jenis_laporan" name="jenis_laporan"></select>
+                  </div>
+                </div>
+    
+                <div class="form-group row invisible" id="form_filter">
+                  <label for="filter" class="col-sm-2 col-form-label col-form-label-sm">Filter</label>
+                  <div class="col-sm-5">
+                    <div class="form-group">
+                      <label for="input_seller">Seller</label>
+                      <input type="hidden" id="input_seller_id" name="input_seller_id">
+                      <input type="text" class="form-control" id="seller_nama" placeholder="Klik untuk memilih" aria-describedby="button-addon1" readonly>
+                    </div>
+                  </div>
+                  <div class="col-sm-5">
+                    <div class="form-group">
+                      <label for="input_product">Produk</label>
+                      <input type="hidden" id="input_produk_id" name="input_produk_id">
+                      <input type="text" class="form-control" id="produk_nama" placeholder="Klik untuk memilih" readonly>
+                    </div>
+                  </div>
+                </div>
+    
+              </form>
+            </div>
+          </div>
+          
+        </div>
+        <div class="card-footer">
+          <div class="row">
+            <div class="col-lg-4"></div>
+            <div class="col-lg-6">
+              <div class="form-group row">
+                <label for="range_tanggal" class="col-sm-4 col-form-label col-form-label-sm">Jenis Export</label>
+                <div class="col-sm-8">
+                  <select class="form-control" id="jenis_export"></select>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2">
+              <div class="form-group">       
+                <button type="button" class="btn btn-primary" id="submit_form">Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL RESELLER POPUP -->
+  <div class="modal fade bd-example-modal-xl" id="modal_seller" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Pilih SELLER</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-lg">
+              <table class="table table-hover table-bordered table-sm" id="table_seller" width="100%">
+                <thead>
+                  <tr>
+                    <th>Nama</th>
+                    <th>Alamat</th>
+                    <th>No HP</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group row">
+                  <label for="table_seller_id" class="col-sm-4 col-form-label">Customer Selected</label>
+                  <div class="col-sm-8">
+                    <input type="hidden" id="table_seller_id" value="">
+                    <input type="text" class="form-control form-control" id="table_seller_nama" placeholder="Seller" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4"></div>
+              <div class="col-lg-2">
+                <button type="button" class="btn btn-success btn-block" id="btn_pilih_seller" disabled>Pilih</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /MODAL RESELLER POPUP -->
+
+  <!-- MODAL PRODUK POPUP -->
+  <div class="modal fade bd-example-modal-xl" id="modal_produk" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Pilih SELLER</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-lg">
+              <table class="table table-hover table-bordered table-sm" id="table_produk" width="100%">
+                <thead>
+                  <tr>
+                    <th width="75%">Nama</th>
+                    <th width="10%">Harga (Rp)</th>
+                    <th width="10%">Potongan (Rp)</th>
+                    <th width="5%">Berat</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group row">
+                  <label for="table_produk_nama" class="col-sm-4 col-form-label">Customer Selected</label>
+                  <div class="col-sm-8">
+                    <input type="hidden" id="table_produk_id" value="">
+                    <input type="text" class="form-control form-control" id="table_produk_nama" placeholder="Produk" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4"></div>
+              <div class="col-lg-2">
+                <button type="button" class="btn btn-success btn-block" id="btn_pilih_produk" disabled>Pilih</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /MODAL PRODUK POPUP -->
+
+</section>

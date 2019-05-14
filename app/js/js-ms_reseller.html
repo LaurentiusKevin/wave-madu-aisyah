@@ -1,0 +1,251 @@
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+<script>
+  var btnNew = $('#newbtn_form');
+  var btnEdit = $('#editbtn_form');
+  var btnDelete = $('#deletebtn_form');
+  var formCard = $('#form_card');
+  var formJudul = $('#form_judul');
+  var formData = $('#form_data');
+  var setID = $('#set_id');
+  var setDisplayName = $('#display_name');
+
+  var reseller = $('#form_reseller');
+  var subreseller = $('#form_subreseller');
+  var formSelect = $('#form_select');
+  var inputReseller = $('#input_reseller');
+  var formEditSelected = $('#form_edit_selected');
+
+  function newButton()
+  {
+    btnEdit.attr('disabled', true);
+    btnDelete.attr('disabled', true);
+    formSelect.removeAttr('disabled', true);
+    $('#input_nama_reseller').val('');
+    $('#input_alamat_reseller').val('');
+    $('#input_telp_reseller').val('');
+    $('#input_nama_subreseller').val('');
+    $('#input_alamat_subreseller').val('');
+    $('#input_telp_subreseller').val('');
+    setDisplayName.val('');
+    setID.val('new');
+    formCard.removeAttr('hidden');
+    formSelect.val('0');
+    formJudul.html('NEW RESELLER');
+    reseller.attr('hidden', true);
+    subreseller.attr('hidden', true);
+  }
+
+  function editButton()
+  {
+    var dataForm = formEditSelected.val();
+    var id = setID.val();
+    formSelect.val(dataForm);
+    formSelect.attr('disabled', true);
+    console.log(id);
+    switch (dataForm) {
+      case 'form_reseller':
+        $.ajax({
+          type: "POST",
+          url: "app/class/class-ms_reseller.php",
+          data: {case:'edit_reseller', id:id},
+          success: function (response) {
+            console.log(response);
+            var result = JSON.parse(response);
+            // console.log(result.nama);
+            formJudul.html('Edit Reseller - ( '+result.nama+' )');
+            formCard.removeAttr('hidden');
+            reseller.removeAttr('hidden');
+            subreseller.attr('hidden', true);
+            $('#input_nama_reseller').val(result.nama);
+            $('#input_alamat_reseller').val(result.alamat);
+            $('#input_telp_reseller').val(result.no_hp);
+          }
+        });
+        break;
+
+      case 'form_subreseller':
+        $.ajax({
+          type: "POST",
+          url: "app/class/class-ms_reseller.php",
+          data: {case:'edit_subreseller', id:id},
+          success: function (response) {
+            console.log(response);
+            var result = JSON.parse(response);
+            // console.log(result.nama);
+            formJudul.html('Edit Sub Reseller - ( '+result.nama+' )');
+            formCard.removeAttr('hidden');
+            subreseller.removeAttr('hidden');
+            reseller.attr('hidden', true);
+            inputReseller.html(result.reseller);
+            $('#input_nama_subreseller').val(result.nama);
+            $('#input_alamat_subreseller').val(result.alamat);
+            $('#input_telp_subreseller').val(result.no_hp);
+            inputReseller.val(result.id_header_reseller);
+          }
+        });
+        break;
+    }
+  }
+
+  function deleteButton()
+  {
+    var data = Array(
+      {name: 'case', value: 'delete_data'},
+      {name: 'nama', value: setDisplayName.val()},
+      {name: 'id', value: setID.val()}
+    )
+    $.ajax({
+      type: "POST",
+      url: "app/class/class-ms_reseller.php",
+      data: data,
+      // dataType: "JSON",
+      success: function (response) {
+        // console.log(response);
+        var result = JSON.parse(response);
+        // console.log(result.error);
+        if (result.status == 'success') {
+          Swal.fire({
+            type: 'success',
+            title: 'Data terhapus',
+            text: 'RESELLER : '+result.nama,
+            onClose: function(e) {
+              location.reload();
+            }
+          })
+        } else {
+          Swal.fire({
+            type: 'error',
+            title: 'Gagal Menyimpan'+result.nama,
+            text: 'Error :'+result.error+'Silahkan coba lagi atau hubungi WAVE Solusi Indonesia'
+          })
+        }
+      }
+    });
+  }
+
+  $(document).ready(function() {
+    var tables = $('#data_tables').DataTable({
+      "scrollY": "200px",
+      "scrollCollapse": true,
+      // "paging": false,
+      "pageLength": 25,
+      "bInfo": false,
+			"ajax": {
+				"method": "POST",
+				"url": "app/class/class-ms_reseller.php",
+        "data": {
+          "case": "list"
+        }
+      },
+      "columns": [
+      { "data": "nama" },
+      { "data": "no_hp" },
+      { "data": "alamat" },
+      { "data": "subreseller_dari" },],
+      "order": [[0,'asc']]
+    });
+
+    $('#data_tables tbody').on('click', 'tr', function () {
+      var data = tables.row( this ).data();
+      setDisplayName.val(data['nama']);
+      setID.val(data['id_reseller']);
+      formEditSelected.val(data['option']);
+      btnEdit.removeAttr('disabled');
+      btnDelete.removeAttr('disabled');
+      // console.log(formEditSelected.val());
+    } );
+
+    formSelect.change(function() {
+      var selected = $(this).val();
+      // console.log(selected);
+      switch (selected) {
+        case 'form_reseller':
+          reseller.removeAttr('hidden');
+          subreseller.attr('hidden',true);
+          inputReseller.html('<option value="">Pilih ...</option>');
+          break;
+        
+        case 'form_subreseller':
+          subreseller.removeAttr('hidden');
+          reseller.attr('hidden',true);
+          $.ajax({
+            type: "POST",
+            url: "app/class/class-ms_reseller.php",
+            data: {case:'list_reseller'},
+            dataType: "html",
+            success: function (response) {
+              inputReseller.html(response);
+            }
+          });
+          break;
+      }
+    })
+
+    reseller.submit(function(e) {
+      e.preventDefault();
+      var data = $(this).serializeArray();
+      data.push({ name: 'id', value: setID.val() });
+      data.push({ name: 'case', value: 'submit_reseller' });
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-ms_reseller.php",
+        data: data,
+        success: function (response) {
+          // console.log(response);
+          var result = JSON.parse(response);
+          if (result.status == 'success') {
+            Swal.fire({
+              type: 'success',
+              title: 'Data tersimpan',
+              text: 'RESELLER : '+result.nama,
+              onClose: function(e) {
+                location.reload();
+              }
+            })
+          } else {
+            Swal.fire({
+              type: 'error',
+              title: 'Gagal Menyimpan'+result.nama,
+              text: 'Error :'+result.error+'Silahkan coba lagi atau hubungi WAVE Solusi Indonesia'
+            })
+          }
+        }
+      });
+    });
+
+    subreseller.submit(function(e) {
+      e.preventDefault();
+      var data = $(this).serializeArray();
+      data.push({ name: 'id', value: setID.val() });
+      data.push({ name: 'case', value: 'submit_subreseller' });
+      console.log(data);
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-ms_reseller.php",
+        data: data,
+        success: function (response) {
+          // console.log(response);
+          var result = JSON.parse(response);
+          if (result.status == 'success') {
+            Swal.fire({
+              type: 'success',
+              title: 'Data tersimpan',
+              text: 'SUB RESELLER : '+result.nama,
+              onClose: function(e) {
+                location.reload();
+              }
+            })
+          } else {
+            Swal.fire({
+              type: 'error',
+              title: 'Gagal Menyimpan'+result.nama,
+              text: 'Error :'+result.error+'Silahkan coba lagi atau hubungi WAVE Solusi Indonesia'
+            })
+          }
+        }
+      });
+    });
+  })
+</script>

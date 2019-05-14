@@ -1,0 +1,162 @@
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.4.10/cleave.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+<script>
+  var newForm = $('#newbtn_form');
+  var editForm = $('#editbtn_form');
+  var deleteForm = $('#deletebtn_form');
+  var formCard = $('#form_card');
+  var formJudul = $('#form_judul');
+  var formData = $('#form_data');
+  var setID = $('#set_id');
+  var setDisplayName = $('#row_display');
+
+  var inputNama = $('#input_nama');
+  var inputAlamat = $('#input_alamat');
+  var inputTelp = $('#input_telp');
+  var inputNamaPic = $('#input_nama_pic');
+  var inputTelpPic = $('#input_telp_pic')
+  var inputEmailPic = $('#input_email_pic');
+
+  function newButton() {
+    setID.val('new');
+    setDisplayName.val('');
+    formCard.removeAttr('hidden');
+    formJudul.html('New Ekspedisi');
+    inputNama.val('');
+    inputAlamat.val('');
+    inputTelp.val('');
+    inputNamaPic.val('');
+    inputTelpPic.val('');
+    inputEmailPic.val('');
+  }
+
+  function editButton()
+  {
+    var dataID = setID.val();
+    // console.log(dataID);
+    if (dataID == 'new' || dataID == '') {
+      Swal.fire({
+        type: 'warning',
+        title: 'Data kosong',
+        text: 'Silahkan pilih data yang akan anda edit'
+      })
+    } else {
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-ms_ekspedisi-getid.php",
+        data: {case:'edit_data', id:dataID},
+        success: function (response) {
+          result = JSON.parse(response);
+          // console.log(response);
+          formCard.removeAttr('hidden');
+          formJudul.html('Edit Ekspedisi - ( '+result.nama+' )');
+          setID.val(result.id_ekspedisi);
+          inputNama.val(result.nama);
+          inputAlamat.val(result.alamat);
+          inputTelp.val(result.telp);
+          inputNamaPic.val(result.nama_pic);
+          inputTelpPic.val(result.telp_pic);
+          inputEmailPic.val(result.email_pic);
+        }
+      });
+    }
+  }
+
+  function deleteButton() {
+    var dataID = setID.val();
+    var dataName = setDisplayName.val();
+    // console.log(dataID);
+    $.ajax({
+      type: "POST",
+      url: "app/class/class-ms_ekspedisi.php",
+      data: {case:'delete_data', id:dataID, nama:dataName},
+      success: function (response) {
+        console.log(response);
+        var data = JSON.parse(response);
+        if (data.status == 'success') {
+          Swal.fire({
+            type: 'success',
+            title: 'Berhasil',
+            text: 'User '+data.nama+' berhasil terhapus.',
+            onClose: function(e) {
+              location.reload();
+            }
+          })
+        } else {
+          Swal.fire({
+            type: 'error',
+            title: 'Gagal',
+            text: 'Silahkan coba kembali atau hubungi WAVE SOLUSI INDONESIA'
+          })
+        }
+      }
+    });
+  }
+
+  $(document).ready(function() {
+    // NEW / UPDATE ekspedisi
+    formData.submit(function(e) {
+      e.preventDefault();
+      var data = $(this).serialize();
+      $.ajax({
+        type: "POST",
+        url: "app/class/class-ms_ekspedisi-save.php",
+        data: data,
+        success: function (response) {
+          console.log(response);
+          var result = JSON.parse(response);
+          if (result.status == 'success') {
+            Swal.fire({
+              type: 'success',
+              title: 'Data tersimpan',
+              text: 'Customer : '+result.nama,
+              onClose: function(e) {
+                location.reload();
+              }
+            })
+          } else {
+            Swal.fire({
+              type: 'error',
+              title: 'Gagal Menyimpan'+result.nama,
+              text: 'Error :'+result.error+'Silahkan coba lagi atau hubungi WAVE Solusi Indonesia'
+            })
+          }
+        }
+      });
+    })
+
+    // ekspedisi LIST
+    var tables = $('#data_tables').DataTable({
+      "scrollY": "200px",
+      "scrollCollapse": true,
+      // "paging": false,
+      "pageLength": 25,
+      "bInfo": false,
+			"ajax": {
+				"method": "POST",
+				"url": "app/class/class-ms_ekspedisi.php",
+        "data": {
+          "case": "list_data"
+        }
+      },
+      "columns": [
+      { "data": "nama" },
+      { "data": "alamat" },
+      { "data": "telp" },
+      { "data": "nama_pic" },
+      { "data": "telp_pic" },
+      { "data": "email_pic" },],
+      "order": [[0,'desc']]
+    });
+
+    $('#data_tables tbody').on('click', 'tr', function () {
+      var data = tables.row( this ).data();
+      setDisplayName.val(data['nama']);
+      setID.val(data['id_ekspedisi']);
+      editForm.removeAttr('disabled');
+      deleteForm.removeAttr('disabled');
+    } );
+  })
+</script>
