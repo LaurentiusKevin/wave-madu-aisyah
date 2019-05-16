@@ -130,6 +130,7 @@
     // ekspedisi LIST
     var tables = $('#data_tables').DataTable({
       "scrollY": "200px",
+      "scrollX": true,
       "scrollCollapse": true,
       // "paging": false,
       "pageLength": 25,
@@ -151,12 +152,24 @@
       "order": [[0,'desc']]
     });
 
-    $('#data_tables tbody').on('click', 'tr', function () {
+    $('#data_tables tbody').on( 'click', 'tr', function () {
       var data = tables.row( this ).data();
-      setDisplayName.val(data['nama']);
-      setID.val(data['id_ekspedisi']);
-      editForm.removeAttr('disabled');
-      deleteForm.removeAttr('disabled');
+      // console.log(data['username']);
+      if ( $(this).hasClass('selected') ) {
+        $(this).removeClass('selected');
+        setID.val('');
+        setDisplayName.val('');
+        editForm.attr('disabled','true');
+        deleteForm.attr('disabled','true');
+      }
+      else {
+        tables.$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+        setID.val(data['id_ekspedisi']);
+        setDisplayName.val(data['nama']);
+        editForm.removeAttr('disabled');
+        deleteForm.removeAttr('disabled');
+      }
     } );
   })
 </script>

@@ -128,6 +128,7 @@
     // PRODUCT LIST
     var tables = $('#data_tables').DataTable({
       "scrollY": "200px",
+      "scrollX": true,
       "scrollCollapse": true,
       // "paging": false,
       "pageLength": 25,
@@ -145,12 +146,24 @@
       "order": [[0,'asc']]
     });
 
-    $('#data_tables tbody').on('click', 'tr', function () {
+    $('#data_tables tbody').on( 'click', 'tr', function () {
       var data = tables.row( this ).data();
-      setDisplayName.val(data['nama']);
-      setID.val(data['id_product']);
-      btnEdit.removeAttr('disabled');
-      btnDelete.removeAttr('disabled');
+      // console.log(data['username']);
+      if ( $(this).hasClass('selected') ) {
+        $(this).removeClass('selected');
+        setID.val('');
+        setDisplayName.val('');
+        btnEdit.attr('disabled','true');
+        btnDelete.attr('disabled','true');
+      }
+      else {
+        tables.$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+        setID.val(data['id_product']);
+        setDisplayName.val(data['nama']);
+        btnEdit.removeAttr('disabled');
+        btnDelete.removeAttr('disabled');
+      }
     } );
   })
 </script>

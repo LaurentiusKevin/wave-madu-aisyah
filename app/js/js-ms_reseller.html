@@ -43,7 +43,7 @@
     var id = setID.val();
     formSelect.val(dataForm);
     formSelect.attr('disabled', true);
-    console.log(id);
+    // console.log(id);
     switch (dataForm) {
       case 'form_reseller':
         $.ajax({
@@ -51,7 +51,7 @@
           url: "app/class/class-ms_reseller.php",
           data: {case:'edit_reseller', id:id},
           success: function (response) {
-            console.log(response);
+            // console.log(response);
             var result = JSON.parse(response);
             // console.log(result.nama);
             formJudul.html('Edit Reseller - ( '+result.nama+' )');
@@ -71,7 +71,7 @@
           url: "app/class/class-ms_reseller.php",
           data: {case:'edit_subreseller', id:id},
           success: function (response) {
-            console.log(response);
+            // console.log(response);
             var result = JSON.parse(response);
             // console.log(result.nama);
             formJudul.html('Edit Sub Reseller - ( '+result.nama+' )');
@@ -128,6 +128,7 @@
   $(document).ready(function() {
     var tables = $('#data_tables').DataTable({
       "scrollY": "200px",
+      "scrollX": true,
       "scrollCollapse": true,
       // "paging": false,
       "pageLength": 25,
@@ -147,14 +148,25 @@
       "order": [[0,'asc']]
     });
 
-    $('#data_tables tbody').on('click', 'tr', function () {
+    $('#data_tables tbody').on( 'click', 'tr', function () {
       var data = tables.row( this ).data();
-      setDisplayName.val(data['nama']);
-      setID.val(data['id_reseller']);
-      formEditSelected.val(data['option']);
-      btnEdit.removeAttr('disabled');
-      btnDelete.removeAttr('disabled');
-      // console.log(formEditSelected.val());
+      // console.log(data['username']);
+      if ( $(this).hasClass('selected') ) {
+        $(this).removeClass('selected');
+        formEditSelected.val(0);
+        setID.val('');
+        setDisplayName.val('');
+        btnEdit.attr('disabled','true');
+        btnDelete.attr('disabled','true');
+      } else {
+        tables.$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+        formEditSelected.val(data['option']);
+        setID.val(data['id_reseller']);
+        setDisplayName.val(data['nama']);
+        btnEdit.removeAttr('disabled');
+        btnDelete.removeAttr('disabled');
+      }
     } );
 
     formSelect.change(function() {
@@ -220,7 +232,7 @@
       var data = $(this).serializeArray();
       data.push({ name: 'id', value: setID.val() });
       data.push({ name: 'case', value: 'submit_subreseller' });
-      console.log(data);
+      // console.log(data);
       $.ajax({
         type: "POST",
         url: "app/class/class-ms_reseller.php",

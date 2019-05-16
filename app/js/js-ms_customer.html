@@ -91,6 +91,7 @@
     // CUSTOMER LIST
     var tables = $('#data_tables').DataTable({
       "scrollY": "200px",
+      "scrollX": true,
       "scrollCollapse": true,
       // "paging": false,
       "pageLength": 25,
@@ -112,13 +113,33 @@
       "order": [[0,'asc']]
     });
 
-    $('#data_tables tbody').on('click', 'tr', function () {
-        var data = tables.row( this ).data();
-        setDisplayName.val(data['nama']);
+    $('#data_tables tbody').on( 'click', 'tr', function () {
+      var data = tables.row( this ).data();
+      // console.log(data['username']);
+      if ( $(this).hasClass('selected') ) {
+        $(this).removeClass('selected');
+        setID.val('');
+        setDisplayName.val('');
+        editForm.attr('disabled','true');
+        deleteForm.attr('disabled','true');
+      }
+      else {
+        tables.$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
         setID.val(data['id_customer']);
+        setDisplayName.val(data['nama']);
         editForm.removeAttr('disabled');
         deleteForm.removeAttr('disabled');
+      }
     } );
+
+    // $('#data_tables tbody').on('click', 'tr', function () {
+    //     var data = tables.row( this ).data();
+    //     setDisplayName.val(data['nama']);
+    //     setID.val(data['id_customer']);
+    //     editForm.removeAttr('disabled');
+    //     deleteForm.removeAttr('disabled');
+    // } );
 
     // Provinsi
     $.ajax({
