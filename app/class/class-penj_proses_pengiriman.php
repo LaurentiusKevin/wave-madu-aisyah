@@ -8,6 +8,8 @@ $case = $_POST['case'];
 
 switch ($case) {
   case 'list':
+    $startDate = $_POST['startDate'];
+    $endDate = $_POST['endDate'];
     $sql = "SELECT kasir_mst.no_transaksi, DATE_FORMAT(tgl_transaksi,'%d %M %Y, Pk %H:%i:%s') AS tgl_transaksi, 
             DATE_FORMAT(tgl_kirim,'%d %M %Y, Pk %H:%i:%s') AS tgl_kirim,
             cust.nama AS customer, cust.alamat, cust.kecamatan, cust.kota, cust.provinsi,
@@ -20,7 +22,7 @@ switch ($case) {
             JOIN ms_reseller AS sub ON kasir_mst.id_subreseller=sub.id_reseller
             JOIN ms_ekspedisi AS ekspedisi ON kasir_mst.id_ekspedisi=ekspedisi.id_ekspedisi
             JOIN pengiriman_onhold AS poh ON kasir_mst.no_transaksi=poh.no_transaksi
-            WHERE status_kirim IN ('1','2')";
+            WHERE status_kirim IN ('1','2') AND tgl_transaksi BETWEEN '$startDate' AND '$endDate'";
     $query = mysqli_query($conn,$sql);
     $total = mysqli_num_rows($query);
     if ($total < 1) {

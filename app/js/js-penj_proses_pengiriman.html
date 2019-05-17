@@ -2,6 +2,7 @@
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.4.10/cleave.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.4/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.4/daterangepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
@@ -64,26 +65,46 @@
   </div>
 </script>
 <script>
-  var reloadBtn = document.getElementById('btn-reload');
+  var filterTgl = $('#filterTgl');
 	var uploadBtn = $('#uploadbtn_form');
   var formCard = $('#form_card');
   var formData = $('#form_data');
   var statusKirim = $('#input_status');
-  $(document).ready(function () {
-    reloadBtn.addEventListener('click',function() {
-      // $.getJSON('http://www.whateverorigin.org/get?url=' + encodeURIComponent('https://berdu.id/cek-resi?courier=ninja&code=NVIDMDAIS190420014&secret=RUzROx') + '&callback=?', function(data){
-      //   alert(data.contents);
-      // });
 
+  var startDate = moment().startOf('week').format('YYYY-MM-DD');
+  var endDate = moment().endOf('week').format('YYYY-MM-DD');
+  $(document).ready(function () {
+    filterTgl.daterangepicker({
+      open: 'left',
+      startDate: moment().startOf('week'),
+      endDate: moment().endOf('week'),
+      locale: {
+        format: 'DD/MM/YYYY'
+      }
+    });
+    filterTgl.on('apply.daterangepicker', function(ev, picker) {
+      startDate = picker.startDate.format('YYYY-MM-DD');
+      endDate = picker.endDate.format('YYYY-MM-DD');
+      tables.clear().draw();
       $.ajax({
         type: "POST",
         url: "app/class/class-penj_proses_pengiriman.php",
-        data: {case:'update-status-pengiriman'},
+        data: {case:'list', startDate:startDate, endDate:endDate},
         success: function (response) {
-          console.log(response);
+          // console.log(response);
+          resultData = JSON.parse(response);
+          tables.rows.add(resultData.data).draw();
+          if (tables.data().count() > 0) {
+            // exportAll.removeClass('d-none');
+            // exportSelected.removeClass('d-none');
+          } else {
+            // exportAll.addClass('d-none');
+            // exportSelected.addClass('d-none');
+          }
         }
       });
-    })
+    });
+
     var tables = $('#data_tables').DataTable({
 			"scrollY": "200px",
       "scrollX": true,
@@ -98,7 +119,9 @@
 				"method": "POST",
 				"url": "app/class/class-penj_proses_pengiriman.php",
         "data": {
-          "case": "list"
+          "case": "list",
+          "startDate": startDate,
+          "endDate": endDate
         }
       },
       "columns": [
