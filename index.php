@@ -21,7 +21,15 @@ if ($url == '/') {
 				$endDate = $data[3];
 				$seller = $data[4];
 				$produk = $data[5];
-				require('app/view/pdf/layout.php');
+				switch ($form) {
+					case 'cek-laporan-ninja':
+						require('app/view/csv/layout.php');
+						break;
+					
+					default:
+						require('app/view/pdf/layout.php');
+						break;
+				}
 				break;
 
 			case 'cetak':

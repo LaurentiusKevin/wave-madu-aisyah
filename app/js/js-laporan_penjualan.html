@@ -18,6 +18,10 @@
     jenisLaporan.select2({
       data: [
         {
+          "id": "cek-laporan-ninja",
+          "text": "CEK LAPORAN NINJAXPRESS"
+        },
+        {
           "id": "per-faktur-rinci",
           "text": "PER FAKTUR RINCI"
         },
@@ -42,22 +46,22 @@
         $('#form_filter').removeClass('invisible');
       }
     });
-    $('#jenis_export').select2({
-      data: [
-        {
-          "id": "pdf",
-          "text": "PDF"
-        },
-        {
-          "id": "excel",
-          "text": "EXCEL"
-        },
-        {
-          "id": "csv",
-          "text": "CSV"
-        }
-      ]
-    });
+    // $('#jenis_export').select2({
+    //   data: [
+    //     {
+    //       "id": "pdf",
+    //       "text": "PDF"
+    //     },
+    //     {
+    //       "id": "excel",
+    //       "text": "EXCEL"
+    //     },
+    //     {
+    //       "id": "csv",
+    //       "text": "CSV"
+    //     }
+    //   ]
+    // });
 
     // DATE PICKER
     $('#range_tanggal').daterangepicker({
@@ -76,7 +80,7 @@
 
     // JENIS LAPORAN CHANGE
     inputSeller.click(function() {
-      console.log(jenisLaporan.val());
+      // console.log(jenisLaporan.val());
       if (jenisLaporan.val() == 'per-faktur-rinci') {
         Swal.fire({
           type: 'info',
@@ -89,8 +93,6 @@
       }
     });
     
-    
-
     // SELLER MODAL
     var sellerTable = $('#table_seller').DataTable({
       // "scrollY": "200px",
@@ -169,7 +171,7 @@
     });
 
     $('#submit_form').click(function(e) {
-      e.preventDefault();
+      // e.preventDefault();
       var seller = $('#input_seller_id').val();
       var produk = $('#input_produk_id').val();
       if (seller == '') { seller = 'all'; }
@@ -191,6 +193,14 @@
             urlTarget += '/';
           });
           // console.log(urlTarget);
+          window.open(urlTarget);
+          break;
+        case 'csv':
+          var urlTarget = 'laporan/'
+          $.each(urlArray,function(i,v) {
+            urlTarget += v;
+            urlTarget += '/';
+          })
           window.open(urlTarget);
           break;
       }
