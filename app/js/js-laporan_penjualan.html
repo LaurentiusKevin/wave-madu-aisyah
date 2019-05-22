@@ -46,22 +46,22 @@
         $('#form_filter').removeClass('invisible');
       }
     });
-    // $('#jenis_export').select2({
-    //   data: [
-    //     {
-    //       "id": "pdf",
-    //       "text": "PDF"
-    //     },
-    //     {
-    //       "id": "excel",
-    //       "text": "EXCEL"
-    //     },
-    //     {
-    //       "id": "csv",
-    //       "text": "CSV"
-    //     }
-    //   ]
-    // });
+    $('#jenis_export').select2({
+      data: [
+        {
+          "id": "pdf",
+          "text": "PDF"
+        },
+        {
+          "id": "excel",
+          "text": "EXCEL"
+        },
+        {
+          "id": "csv",
+          "text": "CSV"
+        }
+      ]
+    });
 
     // DATE PICKER
     $('#range_tanggal').daterangepicker({

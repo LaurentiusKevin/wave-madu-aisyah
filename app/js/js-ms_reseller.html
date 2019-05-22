@@ -96,33 +96,45 @@
       {name: 'nama', value: setDisplayName.val()},
       {name: 'id', value: setID.val()}
     )
-    $.ajax({
-      type: "POST",
-      url: "app/class/class-ms_reseller.php",
-      data: data,
-      // dataType: "JSON",
-      success: function (response) {
-        // console.log(response);
-        var result = JSON.parse(response);
-        // console.log(result.error);
-        if (result.status == 'success') {
-          Swal.fire({
-            type: 'success',
-            title: 'Data terhapus',
-            text: 'RESELLER : '+result.nama,
-            onClose: function(e) {
-              location.reload();
+    Swal.fire({
+      title: 'Seller '+setDisplayName.val()+' akan dihapus!',
+      text: "Anda perlu menghubungi WAVE Solusi Indonesia untuk mengaktifkannya kembali.",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+          type: "POST",
+          url: "app/class/class-ms_reseller.php",
+          data: data,
+          // dataType: "JSON",
+          success: function (response) {
+            // console.log(response);
+            var result = JSON.parse(response);
+            // console.log(result.error);
+            if (result.status == 'success') {
+              Swal.fire({
+                type: 'success',
+                title: 'Data terhapus',
+                text: 'RESELLER : '+result.nama,
+                onClose: function(e) {
+                  location.reload();
+                }
+              })
+            } else {
+              Swal.fire({
+                type: 'error',
+                title: 'Gagal Menyimpan'+result.nama,
+                text: 'Error :'+result.error+'Silahkan coba lagi atau hubungi WAVE Solusi Indonesia'
+              })
             }
-          })
-        } else {
-          Swal.fire({
-            type: 'error',
-            title: 'Gagal Menyimpan'+result.nama,
-            text: 'Error :'+result.error+'Silahkan coba lagi atau hubungi WAVE Solusi Indonesia'
-          })
-        }
+          }
+        });
       }
-    });
+    })
   }
 
   $(document).ready(function() {

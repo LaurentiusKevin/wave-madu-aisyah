@@ -68,31 +68,43 @@
     var dataID = setID.val();
     var dataName = setDisplayName.val();
     // console.log(dataID);
-    $.ajax({
-      type: "POST",
-      url: "app/class/class-ms_ekspedisi.php",
-      data: {case:'delete_data', id:dataID, nama:dataName},
-      success: function (response) {
-        console.log(response);
-        var data = JSON.parse(response);
-        if (data.status == 'success') {
-          Swal.fire({
-            type: 'success',
-            title: 'Berhasil',
-            text: 'User '+data.nama+' berhasil terhapus.',
-            onClose: function(e) {
-              location.reload();
+    Swal.fire({
+      title: 'Ekspedisi '+dataName+' akan dihapus!',
+      text: "Anda perlu menghubungi WAVE Solusi Indonesia untuk mengaktifkannya kembali.",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+          type: "POST",
+          url: "app/class/class-ms_ekspedisi.php",
+          data: {case:'delete_data', id:dataID, nama:dataName},
+          success: function (response) {
+            console.log(response);
+            var data = JSON.parse(response);
+            if (data.status == 'success') {
+              Swal.fire({
+                type: 'success',
+                title: 'Berhasil',
+                text: 'User '+data.nama+' berhasil terhapus.',
+                onClose: function(e) {
+                  location.reload();
+                }
+              })
+            } else {
+              Swal.fire({
+                type: 'error',
+                title: 'Gagal',
+                text: 'Silahkan coba kembali atau hubungi WAVE SOLUSI INDONESIA'
+              })
             }
-          })
-        } else {
-          Swal.fire({
-            type: 'error',
-            title: 'Gagal',
-            text: 'Silahkan coba kembali atau hubungi WAVE SOLUSI INDONESIA'
-          })
-        }
+          }
+        });
       }
-    });
+    })
   }
 
   $(document).ready(function() {

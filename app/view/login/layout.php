@@ -42,7 +42,8 @@
               <div class="form-group mb-4">
                 <input type="password" name="input_password" placeholder="Password" class="form-control border-0 shadow form-control-lg text-violet">
               </div>
-              <button type="submit" class="btn btn-primary shadow px-5">Log in</button>
+              <a href="/" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Go Back</a>
+              <button type="submit" class="btn btn-primary float-right shadow px-5">Log in</button>
             </form>
           </div>
         </div>

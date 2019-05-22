@@ -33,7 +33,7 @@
     inputPotongan.setRawValue('');
     inputBerat.val('');
   }
-  
+
   function editProduct()
   {
     var id = setID.val();
@@ -61,31 +61,43 @@
   {
     var id = setID.val();
     var name = setDisplayName.val();
-    $.ajax({
-      type: "POST",
-      url: "app/class/class-ms_product.php",
-      data: {case:'delete_product', id:id, name:name},
-      success: function (response) {
-        // console.log(response);
-        var result = JSON.parse(response);
-        if (result.status == 'success') {
-          Swal.fire({
-            type: 'success',
-            title: 'Berhasil',
-            text: 'Produk ( '+result.name+' ) berhasil terhapus.',
-            onClose: function(e) {
-              location.reload();
+    Swal.fire({
+      title: 'Product '+name+' akan dihapus!',
+      text: "Anda perlu menghubungi WAVE Solusi Indonesia untuk mengaktifkannya kembali.",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+          type: "POST",
+          url: "app/class/class-ms_product.php",
+          data: {case:'delete_product', id:id, name:name},
+          success: function (response) {
+            // console.log(response);
+            var result = JSON.parse(response);
+            if (result.status == 'success') {
+              Swal.fire({
+                type: 'success',
+                title: 'Berhasil',
+                text: 'Produk ( '+result.name+' ) berhasil terhapus.',
+                onClose: function(e) {
+                  location.reload();
+                }
+              })
+            } else {
+              Swal.fire({
+                type: 'error',
+                title: 'Gagal',
+                text: 'Silahkan coba kembali atau hubungi WAVE SOLUSI INDONESIA'
+              })
             }
-          })
-        } else {
-          Swal.fire({
-            type: 'error',
-            title: 'Gagal',
-            text: 'Silahkan coba kembali atau hubungi WAVE SOLUSI INDONESIA'
-          })
-        }
+          }
+        });
       }
-    });
+    })
   }
 
   $(document).ready(function() {
